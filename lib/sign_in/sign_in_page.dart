@@ -12,6 +12,7 @@ class SignInPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+       backgroundColor: Colors.white,
       body: Stack(
         children: [
           // Status Bar
@@ -37,10 +38,22 @@ class SignInPage extends StatelessWidget {
           ),
 
           // Logo
+          Positioned(
+            top: 80,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Image.asset(
+                'images/lastlogo.png',
+                width: 400,
+                height: 400,
+              ),
+            ),
+          ),
 
           // Blue Container with Login Form
           Positioned(
-            bottom: 0,
+            bottom: -100,
             left: 0,
             right: 0,
             child: Container(
@@ -54,8 +67,9 @@ class SignInPage extends StatelessWidget {
                 ),
               ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const SizedBox(height: 20), // Add space above the username
                   const Text(
                     'Username',
                     style: TextStyle(
@@ -82,7 +96,7 @@ class SignInPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   const Text(
-                    '4-Digit PIN',
+                    'Enter Your PIN',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -107,16 +121,6 @@ class SignInPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  const Center(
-                    child: Text(
-                      'You are not authorize? apply',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 15,
-                        fontFamily: 'Inter',
-                      ),
-                    ),
-                  ),
                   const SizedBox(height: 10),
                   Center(
                     child: GestureDetector(
@@ -134,7 +138,7 @@ class SignInPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 30), // Add space above the button
                   Center(
                     child: ElevatedButton(
                       onPressed: () async {
@@ -160,14 +164,17 @@ class SignInPage extends StatelessWidget {
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(
-                            0xFFFB8E36), // Set the button color here
-                        foregroundColor:
-                            Colors.white, // Set the text color to white
+                        backgroundColor: const Color(0xFFFB8E36),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 50, vertical: 20), // Increase button size
+                        textStyle: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold), // Increase font size and make bold
                       ),
                       child: const Text('Sign In'),
                     ),
                   ),
+                  const SizedBox(height: 20), // Add space below the button
                 ],
               ),
             ),

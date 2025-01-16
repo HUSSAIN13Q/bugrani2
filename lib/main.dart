@@ -30,6 +30,7 @@ final GoRouter _router = GoRouter(
 );
 
 class MainApp extends StatelessWidget {
+  
   const MainApp({super.key});
 
   @override
