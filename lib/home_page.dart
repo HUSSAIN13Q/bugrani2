@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'leaves_page.dart';
 import 'widgets/BusinessCardDialog.dart';
+import 'widgets/MapSection.dart';
+import 'widgets/SpecialOffersSection.dart';
+import 'widgets/UpcomingMeetingsSection.dart';
 
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Color(0xFF2C80E6),
           elevation: 0,
@@ -41,7 +46,16 @@ class HomePage extends StatelessWidget {
               flex: 5,
               child: SingleChildScrollView(
                 child: Column(
-                
+                  children: [
+                    SizedBox(height: 16),
+                    MapSection(),
+                    SizedBox(height: 16), // Space between MapSection and LeavesPageButton
+                    LeavesPageButton(),
+                    SizedBox(height: 16), // Space between LeavesPageButton and SpecialOffersSection
+                    SpecialOffersSection(), // Add SpecialOffersSection here
+                    SizedBox(height: 16), // Space before UpcomingMeetingsSection
+                    UpcomingMeetingsSection(), // Add UpcomingMeetingsSection here
+                  ],
                 ),
               ),
             ),
@@ -244,7 +258,12 @@ class _HeaderSectionState extends State<HeaderSection> {
                     children: [
                       WorkStats(title: 'Working day', value: '30', unit: 'Days'),
                       VerticalDivider(color: Colors.grey),
-                      WorkStats(title: 'Late', value: lateMinutes >= 60 ? '${(lateMinutes / 60).floor()}' : '$lateMinutes', unit: lateMinutes >= 60 ? 'hours' : 'Minutes', valueColor: Colors.orange, ),
+                      WorkStats(
+                        title: 'Late',
+                        value: lateMinutes >= 60 ? '${(lateMinutes / 60).floor()}' : '$lateMinutes',
+                        unit: lateMinutes >= 60 ? 'hours' : 'Minutes',
+                        valueColor: Colors.orange,
+                      ),
                       VerticalDivider(color: Colors.grey),
                       WorkStats(title: 'Overtime', value: '15', unit: 'Hours'),
                     ],
@@ -267,10 +286,10 @@ class _HeaderSectionState extends State<HeaderSection> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.double_arrow, color: Colors.white),
+                    Icon(Icons.ads_click_outlined, color: Colors.white),
                     SizedBox(width: 8),
                     Text(
-                      isCheckedIn ? 'Swipe to Check Out' : 'Swipe to Check In',
+                      isCheckedIn ? 'Click to Check Out' : 'Click to Check In',
                       style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
                     ),
                   ],
@@ -297,6 +316,48 @@ class _HeaderSectionState extends State<HeaderSection> {
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class LeavesPageButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => LeavesPage()),
+          );
+        },
+        child: Container(
+          width: double.infinity,
+          height: 80,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2), // Adjust shadow color
+                blurRadius: 10, // Shadow blur radius
+                offset: Offset(0, 4), // Shadow offset
+              ),
+            ],
+          ),
+          child: Center(
+            child: Text(
+              'Leaves Page',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.blue,
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -389,4 +450,3 @@ class SectionContainer extends StatelessWidget {
     );
   }
 }
-

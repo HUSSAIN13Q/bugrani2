@@ -36,13 +36,28 @@ class CommunityItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        Text(subtitle),
-        if (date.isNotEmpty) Text(date),
-      ],
+    return Container(
+      margin: EdgeInsets.only(left: 16), // Add left margin
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white, // Set background to white
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          Text(subtitle, style: TextStyle(fontWeight: FontWeight.bold)),
+          if (date.isNotEmpty) Text(date, style: TextStyle(fontWeight: FontWeight.bold)),
+        ],
+      ),
     );
   }
 }

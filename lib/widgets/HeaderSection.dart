@@ -65,7 +65,7 @@ class _HeaderSectionState extends State<HeaderSection> {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 8),
-                Text('UI Design / IT Department'),
+                Text('UI Design / IT Department', style: TextStyle(fontWeight: FontWeight.bold)),
               ],
             ),
           ),
@@ -120,12 +120,12 @@ class CheckButton extends StatelessWidget {
         children: [
           Icon(icon, size: 30, color: Colors.blue),
           SizedBox(height: 8),
-          Text(title, style: TextStyle(fontSize: 16)),
+          Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           Text(time, style: TextStyle(fontWeight: FontWeight.bold)),
           if (status.isNotEmpty)
             Text(
               status,
-              style: TextStyle(color: status == 'on time' ? Colors.green : Colors.red),
+              style: TextStyle(color: status == 'on time' ? Colors.green : Colors.red, fontWeight: FontWeight.bold),
             ),
         ],
       ),
