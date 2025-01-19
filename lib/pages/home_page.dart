@@ -1,91 +1,152 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'leaves_page.dart';
-import 'widgets/BusinessCardDialog.dart';
-import 'widgets/MapSection.dart';
-import 'widgets/SpecialOffersSection.dart';
-import 'widgets/UpcomingMeetingsSection.dart';
+import '../widgets/BusinessCardDialog.dart';
+import '../widgets/MapSection.dart';
+import '../widgets/SpecialOffersSection.dart';
+import '../widgets/UpcomingMeetingsSection.dart';
+import 'NewsPage.dart';
+import 'InboxPage.dart';
+import 'CommunityPage.dart';
+import 'NotificationPage.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _currentIndex = 0;
+
+  final List<Widget> _pages = [
+    HomePageContent(),
+    CommunityPage(),
+    InboxPage(),
+    NewsPage(),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          backgroundColor: Color(0xFF2C80E6),
-          elevation: 0,
-          centerTitle: true,
-          title: Image.asset(
-            'images/orangelogoonly.png',
-            height: 40,
-          ),
-          leading: IconButton(
-            icon: Icon(Icons.badge_outlined, size: 30, color: Colors.white),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (_) => BusinessCardDialog(),
-              );
-            },
-          ),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.notifications_outlined, color: Colors.white, size: 30),
-              onPressed: () {},
-            ),
-          ],
-        ),
-        body: Column(
-          children: [
-            Expanded(
-              flex: 7,
-              child: HeaderSection(),
-            ),
-            Expanded(
-              flex: 5,
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    SizedBox(height: 16),
-                    MapSection(),
-                    SizedBox(height: 16), // Space between MapSection and LeavesPageButton
-                    LeavesPageButton(),
-                    SizedBox(height: 16), // Space between LeavesPageButton and SpecialOffersSection
-                    SpecialOffersSection(), // Add SpecialOffersSection here
-                    SizedBox(height: 16), // Space before UpcomingMeetingsSection
-                    UpcomingMeetingsSection(), // Add UpcomingMeetingsSection here
-                  ],
+        appBar: _currentIndex == 0
+            ? AppBar(
+                backgroundColor: Color(0xFF2C80E6),
+                elevation: 0,
+                centerTitle: true,
+                title: Image.asset(
+                  'images/orangelogoonly.png',
+                  height: 40,
                 ),
-              ),
-            ),
-          ],
-        ),
+                leading: IconButton(
+                  icon: Icon(Icons.badge_outlined, size: 30, color: Colors.white),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (_) => BusinessCardDialog(),
+                    );
+                  },
+                ),
+                actions: [
+                  IconButton(
+                    icon: Icon(Icons.notifications_outlined, color: Colors.white, size: 30),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => NotificationPage()),
+                      );
+                    },
+                  ),
+                ],
+              )
+            : null,
+        body: _pages[_currentIndex],
         bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Colors.white,
           items: [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home),
+              icon: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.home),
+              ),
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.people),
+              icon: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.people),
+              ),
               label: 'Community',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.inbox),
+              icon: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.inbox),
+              ),
               label: 'Inbox',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.article),
+              icon: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.article),
+              ),
               label: 'News',
             ),
           ],
           selectedItemColor: Colors.blue,
           unselectedItemColor: Colors.black,
-          currentIndex: 0,
-          onTap: (index) {},
+          currentIndex: _currentIndex,
+          onTap: (index) {
+            setState(() {
+              _currentIndex = index;
+            });
+          },
         ),
       ),
+    );
+  }
+}
+
+class HomePageContent extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Expanded(
+          flex: 7,
+          child: HeaderSection(),
+        ),
+        Expanded(
+          flex: 5,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(height: 16),
+                MapSection(),
+                SizedBox(height: 16), // Space between MapSection and LeavesPageButton
+                LeavesPageButton(),
+                SizedBox(height: 16), // Space between LeavesPageButton and SpecialOffersSection
+                SpecialOffersSection(), // Add SpecialOffersSection here
+                SizedBox(height: 16), // Space before UpcomingMeetingsSection
+                UpcomingMeetingsSection(), // Add UpcomingMeetingsSection here
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
