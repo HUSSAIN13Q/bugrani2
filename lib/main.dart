@@ -1,4 +1,4 @@
-
+import 'package:bugrani2/pages/leaves_page.dart';
 import 'package:bugrani2/sign_in/forget_pass.dart';
 import 'package:bugrani2/sign_in/sign_in_page.dart';
 import 'package:flutter/material.dart';
@@ -27,11 +27,15 @@ final GoRouter _router = GoRouter(
       path: '/forget_pass',
       builder: (context, state) => const ForgetPassPage(),
     ),
+    GoRoute(
+      path: '/leaves_page',
+      builder: (context, state) => LeavesPage(), // Route to LeavesPage
+    ),
+    // Add other routes here as needed
   ],
 );
 
 class MainApp extends StatelessWidget {
-  
   const MainApp({super.key});
 
   @override
@@ -39,4 +43,6 @@ class MainApp extends StatelessWidget {
     return MaterialApp.router(
       routerConfig: _router,
       debugShowCheckedModeBanner: false,
-
+    );
+  }
+}
