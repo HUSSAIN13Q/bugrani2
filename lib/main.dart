@@ -1,3 +1,4 @@
+
 import 'package:bugrani2/sign_in/forget_pass.dart';
 import 'package:bugrani2/sign_in/sign_in_page.dart';
 import 'package:flutter/material.dart';
@@ -38,15 +39,4 @@ class MainApp extends StatelessWidget {
     return MaterialApp.router(
       routerConfig: _router,
       debugShowCheckedModeBanner: false,
-    );
-  }
-}
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold();
-  }
-}

@@ -9,11 +9,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+Add the provider package
+=======
   dio: ^5.7.0
   go_router: ^14.6.3
   flutter_otp_text_field: ^1.4.0+2
   shared_preferences: ^2.3.5
   provider: ^6.1.2
+
 
 dev_dependencies:
   flutter_test:
@@ -22,3 +25,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/images/
