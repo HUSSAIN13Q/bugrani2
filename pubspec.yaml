@@ -1,6 +1,6 @@
 name: bugrani2
 description: "A new Flutter project."
-publish_to: 'none'
+publish_to: "none"
 version: 0.1.0
 
 environment:
@@ -9,8 +9,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  intl: ^0.17.0
-  provider: ^6.0.0 # Add the provider package
+Add the provider package
+=======
+  dio: ^5.7.0
+  go_router: ^14.6.3
+  flutter_otp_text_field: ^1.4.0+2
+  shared_preferences: ^2.3.5
+  provider: ^6.1.2
+
 
 dev_dependencies:
   flutter_test:
