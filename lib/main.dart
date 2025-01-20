@@ -1,3 +1,4 @@
+import 'package:bugrani2/pages/leaves_page.dart';
 import 'package:flutter/material.dart';
 import 'pages/home_page.dart';
 
@@ -10,7 +11,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false, // Remove the debug banner
-      home: HomePage(),
+      home: LeavesPage(),
     );
   }
 }
