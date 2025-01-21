@@ -1,3 +1,4 @@
+import 'package:bugrani2/pages/home_page.dart';
 import 'package:bugrani2/pages/leaves_page.dart';
 import 'package:bugrani2/sign_in/forget_pass.dart';
 import 'package:bugrani2/sign_in/sign_in_page.dart';
@@ -21,16 +22,20 @@ final GoRouter _router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => SignInPage(),
+      builder: (context, state) => LeavesPage(),
     ),
     GoRoute(
       path: '/forget_pass',
       builder: (context, state) => const ForgetPassPage(),
     ),
     GoRoute(
-      path: '/leaves_page',
-      builder: (context, state) => LeavesPage(), // Route to LeavesPage
+      path: '/home',
+      builder: (context, state) => HomePage(), // Route to HomePage
     ),
+    // GoRoute(
+    //   path: '/leaves_page',
+    //   builder: (context, state) => LeavesPage(), // Route to LeavesPage
+    // ),
     // Add other routes here as needed
   ],
 );

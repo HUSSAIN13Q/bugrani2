@@ -10,10 +10,7 @@ class _LeavesPageState extends State<LeavesPage> {
   final List<String> leaveTypes = [
     'Choose Your Leave Type',
     'Sick Leave',
-    'Annual Leave',
-    'Casual Leave',
-    'Maternity Leave',
-    'Paternity Leave',
+    'Annual Leave'
   ];
 
   @override
@@ -35,7 +32,7 @@ class _LeavesPageState extends State<LeavesPage> {
                 ),
               ),
               Positioned(
-                top: 50,
+                top: 60,
                 left: MediaQuery.of(context).size.width / 2 - 25,
                 child: Image.asset(
                   'assets/images/orangelogoonly.png',
