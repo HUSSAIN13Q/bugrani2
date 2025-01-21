@@ -63,43 +63,44 @@ class _HomePageState extends State<HomePage> {
           : null,
       body: Column(
         children: [
-          Stack(
-            children: [
-              AnimatedContainer(
-                duration: Duration(milliseconds: 300),
-                height: isExpanded ? 470 : 260, // Adjusted height
-                decoration: BoxDecoration(
-                  color: Color(0xFF2C80E6),
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(40),
-                    bottomRight: Radius.circular(40),
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: HeaderSection(isExpanded: isExpanded),
-                ),
-              ),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Center(
-                  child: IconButton(
-                    icon: Icon(
-                      isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                      color: Colors.white,
+          if (_currentIndex == 0)
+            Stack(
+              children: [
+                AnimatedContainer(
+                  duration: Duration(milliseconds: 300),
+                  height: isExpanded ? 470 : 260,
+                  decoration: BoxDecoration(
+                    color: Color(0xFF2C80E6),
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(40),
+                      bottomRight: Radius.circular(40),
                     ),
-                    onPressed: () {
-                      setState(() {
-                        isExpanded = !isExpanded;
-                      });
-                    },
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: HeaderSection(isExpanded: isExpanded),
                   ),
                 ),
-              ),
-            ],
-          ),
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: IconButton(
+                      icon: Icon(
+                        isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          isExpanded = !isExpanded;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
           Expanded(
             child: _pages[_currentIndex],
           ),
@@ -185,6 +186,33 @@ class HomePageContent extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class CommunityPageContent extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text('Community Page Content'),
+    );
+  }
+}
+
+class InboxPageContent extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text('Inbox Page Content'),
+    );
+  }
+}
+
+class NewsPageContent extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text('News Page Content'),
     );
   }
 }
@@ -435,9 +463,9 @@ class LeavesPageButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.2), // Adjust shadow color
-                blurRadius: 10, // Shadow blur radius
-                offset: Offset(0, 4), // Shadow offset
+                color: Colors.black.withOpacity(0.2),
+                blurRadius: 10,
+                offset: Offset(0, 4),
               ),
             ],
           ),
@@ -508,7 +536,13 @@ class WorkStats extends StatelessWidget {
   final Color? valueColor;
   final Color? unitColor;
 
-  const WorkStats({required this.title, required this.value, required this.unit, this.valueColor, this.unitColor});
+  const WorkStats({
+    required this.title,
+    required this.value,
+    required this.unit,
+    this.valueColor,
+    this.unitColor,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -516,7 +550,8 @@ class WorkStats extends StatelessWidget {
       children: [
         Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
         Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: valueColor ?? Colors.orange)),
-        if (unit.isNotEmpty) Text(unit, style: TextStyle(color: unitColor ?? Colors.black)),
+        if (unit.isNotEmpty)
+          Text(unit, style: TextStyle(color: unitColor ?? Colors.black)),
       ],
     );
   }
