@@ -1,14 +1,50 @@
-class User {
-  String username;
-  String token;
+// class User {
+//   String email;
+//   String password;
 
-  User({required this.username, required this.token});
+//   User({required this.email, required this.password});
+
+//   User.fromJson(Map<String, dynamic> json)
+//       : email = json['email'] as String,
+//         password = json['password'] as String;
+
+//   Map<String, dynamic> toJson() {
+//     return <String, dynamic>{'email': email, 'password': password};
+//   }
+// }
+class User {
+  String name;
+  String email;
+  String password;
+  String role;
+  String? location;
+  String? title;
+
+  User({
+    required this.name,
+    required this.email,
+    required this.password,
+    required this.role,
+    this.location,
+    this.title,
+  });
 
   User.fromJson(Map<String, dynamic> json)
-      : username = json['username'] as String,
-        token = json['token'] as String;
+      : name = json['name'] as String,
+        email = json['email'] as String,
+        password = json['password'] as String,
+        role = json['role'] as String,
+        location = json['location'] as String?,
+        title = json['title'] as String?;
 
   Map<String, dynamic> toJson() {
-    return <String, dynamic>{'username': username, 'password': token};
+    return <String, dynamic>{
+      'name': name,
+      'email': email,
+      'password': password,
+      'role': role,
+      'location': location,
+      'title': title,
+    };
   }
 }

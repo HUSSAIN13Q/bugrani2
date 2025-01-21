@@ -1,5 +1,6 @@
 import 'package:bugrani2/pages/home_page.dart';
 import 'package:bugrani2/pages/leaves_page.dart';
+import 'package:bugrani2/providers/leaves_provider.dart';
 import 'package:bugrani2/sign_in/forget_pass.dart';
 import 'package:bugrani2/sign_in/sign_in_page.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => LeavesProvider()),
       ],
       child: const MainApp(),
     ),
@@ -22,7 +24,7 @@ final GoRouter _router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => LeavesPage(),
+      builder: (context, state) => SignInPage(),
     ),
     GoRoute(
       path: '/forget_pass',

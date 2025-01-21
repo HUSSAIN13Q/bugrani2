@@ -1,3 +1,82 @@
+// import 'dart:io';
+
+// import 'package:bugrani2/services/client.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:flutter/material.dart';
+// import 'package:bugrani2/sign_in/user.dart';
+// import 'package:bugrani2/sign_in/auth_services.dart';
+
+// class AuthProvider extends ChangeNotifier {
+//   String? token; //"error", "email", "token"
+//   User? user;
+
+//   Future<Map<String, String>> signup(
+//       {required String email, required String password}) async {
+//     var response = await AuthServices()
+//         .signupAPI(user: User(email: email, password: password));
+//     if (response['token'] != null) {
+//       _setToken(email, response['token']!);
+//     }
+//     print(response['token'] ?? 'No token');
+//     notifyListeners();
+//     return response;
+//   }
+
+//   Future<String> signin(
+//       {required String email, required String password}) async {
+//     token = await AuthServices()
+//         .loginApi(user: User(email: email, password: password));
+//     // this.user = user;
+//     _setToken(email, token!);
+//     // print(token);
+//     user = User(email: email, password: token!);
+//     notifyListeners();
+//     return token!;
+//   }
+
+//   bool isAuth() {
+//     return (user != null && token!.isNotEmpty);
+//   }
+
+//   Future<void> initAuth() async {
+//     await getToken();
+//     if (isAuth()) {
+//       dio.options.headers = {
+//         HttpHeaders.authorizationHeader: 'Bearer $token',
+//       };
+//       user = User(email: user!.email, password: token!);
+//       print('Bearer $token');
+//       notifyListeners();
+//     }
+//   }
+
+//   void _setToken(String email, String token) async {
+//     SharedPreferences prefs = await SharedPreferences.getInstance();
+//     prefs.setString("email", email);
+//     prefs.setString("token", token);
+//     notifyListeners();
+//   }
+
+//   Future<void> getToken() async {
+//     SharedPreferences prefs = await SharedPreferences.getInstance();
+//     var email = prefs.getString("email");
+//     token = prefs.getString("token");
+
+//     if (email == null || token == null) return;
+
+//     user = User(email: email, password: token!);
+//     notifyListeners();
+//   }
+
+//   void logout() async {
+//     SharedPreferences prefs = await SharedPreferences.getInstance();
+//     prefs.remove('email');
+//     prefs.remove('token');
+//     user = null;
+//     notifyListeners();
+//   }
+// }
+
 import 'dart:io';
 
 import 'package:bugrani2/services/client.dart';
@@ -5,16 +84,31 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:bugrani2/sign_in/user.dart';
 import 'package:bugrani2/sign_in/auth_services.dart';
+
 class AuthProvider extends ChangeNotifier {
-  String? token; //"error", "email", "token"
+  String? token;
   User? user;
 
-  Future<Map<String, String>> signup(
-      {required String username, required String password}) async {
-    var response = await AuthServices()
-        .signupAPI(user: User(username: username, token: password));
+  Future<Map<String, String>> signup({
+    required String name,
+    required String email,
+    required String password,
+    required String role,
+    String? location,
+    String? title,
+  }) async {
+    var response = await AuthServices().signupAPI(
+      user: User(
+        name: name,
+        email: email,
+        password: password,
+        role: role,
+        location: location,
+        title: title,
+      ),
+    );
     if (response['token'] != null) {
-      _setToken(username, response['token']!);
+      _setToken(email, response['token']!);
     }
     print(response['token'] ?? 'No token');
     notifyListeners();
@@ -22,13 +116,17 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<String> signin(
-      {required String username, required String password}) async {
-    token = await AuthServices()
-        .loginApi(user: User(username: username, token: password));
-    // this.user = user;
-    _setToken(username, token!);
-    // print(token);
-    user = User(username: username, token: token!);
+      {required String email, required String password}) async {
+    token = await AuthServices().loginApi(
+      user: User(
+        name: '',
+        email: email,
+        password: password,
+        role: '',
+      ),
+    );
+    _setToken(email, token!);
+    user = User(name: '', email: email, password: token!, role: '');
     notifyListeners();
     return token!;
   }
@@ -43,33 +141,33 @@ class AuthProvider extends ChangeNotifier {
       dio.options.headers = {
         HttpHeaders.authorizationHeader: 'Bearer $token',
       };
-      user = User(username: user!.username, token: token!);
+      user = User(name: '', email: user!.email, password: token!, role: '');
       print('Bearer $token');
       notifyListeners();
     }
   }
 
-  void _setToken(String username, String token) async {
+  void _setToken(String email, String token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString("username", username);
+    prefs.setString("email", email);
     prefs.setString("token", token);
     notifyListeners();
   }
 
   Future<void> getToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var username = prefs.getString("username");
+    var email = prefs.getString("email");
     token = prefs.getString("token");
 
-    if (username == null || token == null) return;
+    if (email == null || token == null) return;
 
-    user = User(username: username, token: token!);
+    user = User(name: '', email: email, password: token!, role: '');
     notifyListeners();
   }
 
   void logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove('username');
+    prefs.remove('email');
     prefs.remove('token');
     user = null;
     notifyListeners();
