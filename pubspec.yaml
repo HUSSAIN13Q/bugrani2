@@ -11,6 +11,7 @@ dependencies:
     sdk: flutter
   intl: ^0.17.0
   provider: ^6.0.0 # Add the provider package
+  qr_flutter: ^4.0.0 # Add the qr_flutter package
 
 dev_dependencies:
   flutter_test:

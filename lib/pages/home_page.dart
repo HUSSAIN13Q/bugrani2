@@ -17,6 +17,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
+  bool isExpanded = true;
 
   final List<Widget> _pages = [
     HomePageContent(),
@@ -27,94 +28,135 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: _currentIndex == 0
-            ? AppBar(
-                backgroundColor: Color(0xFF2C80E6),
-                elevation: 0,
-                centerTitle: true,
-                title: Image.asset(
-                  'images/orangelogoonly.png',
-                  height: 40,
-                ),
-                leading: IconButton(
-                  icon: Icon(Icons.badge_outlined, size: 30, color: Colors.white),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: _currentIndex == 0
+          ? AppBar(
+              backgroundColor: Color(0xFF2C80E6),
+              elevation: 0,
+              centerTitle: true,
+              title: Image.asset(
+                'assets/images/orangelogoonly.png',
+                height: 40,
+              ),
+              leading: IconButton(
+                icon: Icon(Icons.badge_outlined, size: 30, color: Colors.white),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (_) => BusinessCardDialog(),
+                  );
+                },
+              ),
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.notifications_outlined, color: Colors.white, size: 30),
                   onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) => BusinessCardDialog(),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => NotificationPage()),
                     );
                   },
                 ),
-                actions: [
-                  IconButton(
-                    icon: Icon(Icons.notifications_outlined, color: Colors.white, size: 30),
+              ],
+            )
+          : null,
+      body: Column(
+        children: [
+          Stack(
+            children: [
+              AnimatedContainer(
+                duration: Duration(milliseconds: 300),
+                height: isExpanded ? 470 : 260, // Adjusted height
+                decoration: BoxDecoration(
+                  color: Color(0xFF2C80E6),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(40),
+                    bottomRight: Radius.circular(40),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: HeaderSection(isExpanded: isExpanded),
+                ),
+              ),
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: IconButton(
+                    icon: Icon(
+                      isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                      color: Colors.white,
+                    ),
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => NotificationPage()),
-                      );
+                      setState(() {
+                        isExpanded = !isExpanded;
+                      });
                     },
                   ),
-                ],
-              )
-            : null,
-        body: _pages[_currentIndex],
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Colors.white,
-          items: [
-            BottomNavigationBarItem(
-              icon: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.home),
               ),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(Icons.people),
+            ],
+          ),
+          Expanded(
+            child: _pages[_currentIndex],
+          ),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.white,
+        items: [
+          BottomNavigationBarItem(
+            icon: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
               ),
-              label: 'Community',
+              child: Icon(Icons.home),
             ),
-            BottomNavigationBarItem(
-              icon: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(Icons.inbox),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
               ),
-              label: 'Inbox',
+              child: Icon(Icons.people),
             ),
-            BottomNavigationBarItem(
-              icon: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(Icons.article),
+            label: 'Community',
+          ),
+          BottomNavigationBarItem(
+            icon: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
               ),
-              label: 'News',
+              child: Icon(Icons.inbox),
             ),
-          ],
-          selectedItemColor: Colors.blue,
-          unselectedItemColor: Colors.black,
-          currentIndex: _currentIndex,
-          onTap: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-          },
-        ),
+            label: 'Inbox',
+          ),
+          BottomNavigationBarItem(
+            icon: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.article),
+            ),
+            label: 'News',
+          ),
+        ],
+        selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.black,
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
       ),
     );
   }
@@ -125,10 +167,6 @@ class HomePageContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Expanded(
-          flex: 7,
-          child: HeaderSection(),
-        ),
         Expanded(
           flex: 5,
           child: SingleChildScrollView(
@@ -152,6 +190,10 @@ class HomePageContent extends StatelessWidget {
 }
 
 class HeaderSection extends StatefulWidget {
+  final bool isExpanded;
+
+  const HeaderSection({Key? key, required this.isExpanded}) : super(key: key);
+
   @override
   _HeaderSectionState createState() => _HeaderSectionState();
 }
@@ -262,123 +304,113 @@ class _HeaderSectionState extends State<HeaderSection> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Color(0xFF2C80E6),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(40),
-          bottomRight: Radius.circular(40),
-        ),
-      ),
-      child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 8,
-                    offset: Offset(0, 4),
-                  ),
-                ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                blurRadius: 8,
+                offset: Offset(0, 4),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Meshari alhouli',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+              SizedBox(height: 4),
+              Text(
+                'UI Design / IT Department',
+                style: TextStyle(fontSize: 14, color: Colors.black54),
+              ),
+              SizedBox(height: 16),
+              Text(
+                'Total work this month',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Text(
-                    'Meshari alhouli',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
+                  WorkStats(title: 'Working day', value: '30', unit: 'Days'),
+                  VerticalDivider(color: Colors.grey),
+                  WorkStats(
+                    title: 'Late',
+                    value: lateMinutes >= 60 ? '${(lateMinutes / 60).floor()}' : '$lateMinutes',
+                    unit: lateMinutes >= 60 ? 'hours' : 'Minutes',
+                    valueColor: Colors.orange,
                   ),
-                  SizedBox(height: 4),
+                  VerticalDivider(color: Colors.grey),
+                  WorkStats(title: 'Overtime', value: '15', unit: 'Hours'),
+                ],
+              ),
+            ],
+          ),
+        ),
+        if (widget.isExpanded) ...[
+          SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: isCheckedIn ? _checkOut : _checkIn,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orange,
+                padding: EdgeInsets.symmetric(vertical: 20),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.ads_click_outlined, color: Colors.white),
+                  SizedBox(width: 8),
                   Text(
-                    'UI Design / IT Department',
-                    style: TextStyle(fontSize: 14, color: Colors.black54),
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    'Total work this month',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      WorkStats(title: 'Working day', value: '30', unit: 'Days'),
-                      VerticalDivider(color: Colors.grey),
-                      WorkStats(
-                        title: 'Late',
-                        value: lateMinutes >= 60 ? '${(lateMinutes / 60).floor()}' : '$lateMinutes',
-                        unit: lateMinutes >= 60 ? 'hours' : 'Minutes',
-                        valueColor: Colors.orange,
-                      ),
-                      VerticalDivider(color: Colors.grey),
-                      WorkStats(title: 'Overtime', value: '15', unit: 'Hours'),
-                    ],
+                    isCheckedIn ? 'Click to Check Out' : 'Click to Check In',
+                    style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
             ),
-            SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: isCheckedIn ? _checkOut : _checkIn,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  padding: EdgeInsets.symmetric(vertical: 20),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.ads_click_outlined, color: Colors.white),
-                    SizedBox(width: 8),
-                    Text(
-                      isCheckedIn ? 'Click to Check Out' : 'Click to Check In',
-                      style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
+          ),
+          SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              CheckButton(
+                title: 'Check in',
+                time: checkInTime,
+                status: checkInStatus,
+                icon: Icons.check_circle,
               ),
-            ),
-            SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                CheckButton(
-                  title: 'Check in',
-                  time: checkInTime,
-                  status: checkInStatus,
-                  icon: Icons.check_circle,
-                ),
-                SizedBox(width: 16),
-                CheckButton(
-                  title: 'Check out',
-                  time: checkOutTime,
-                  status: checkInStatus,
-                  icon: Icons.logout,
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+              SizedBox(width: 16),
+              CheckButton(
+                title: 'Check out',
+                time: checkOutTime,
+                status: checkInStatus,
+                icon: Icons.logout,
+              ),
+            ],
+          ),
+        ],
+      ],
     );
   }
 }

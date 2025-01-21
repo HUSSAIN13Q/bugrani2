@@ -30,7 +30,7 @@ class SpecialOffersSection extends StatelessWidget {
                 ),
                 SizedBox(width: 16),
                 OfferCard(
-                  imageUrl: 'images/kuwaitairways.jpg',
+                  imageUrl: 'assets/images/kuwaitairways.jpg',
                   title: 'Kuwait Airways Offer',
                 ),
               ],
