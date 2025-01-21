@@ -1,6 +1,8 @@
+import 'package:bugrani2/pages/CommunityPage.dart';
 import 'package:bugrani2/pages/home_page.dart';
 import 'package:bugrani2/pages/leaves_page.dart';
 import 'package:bugrani2/providers/leaves_provider.dart';
+import 'package:bugrani2/providers/workshop_provider.dart';
 import 'package:bugrani2/sign_in/forget_pass.dart';
 import 'package:bugrani2/sign_in/sign_in_page.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +16,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => LeavesProvider()),
+        ChangeNotifierProvider(create: (_) => WorkshopProvider())
       ],
       child: const MainApp(),
     ),
@@ -24,7 +27,7 @@ final GoRouter _router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => SignInPage(),
+      builder: (context, state) => CommunityPage(),
     ),
     GoRoute(
       path: '/forget_pass',
