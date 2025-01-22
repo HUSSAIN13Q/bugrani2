@@ -14,6 +14,7 @@ class LeavesPage extends StatelessWidget {
           'Welcome to the Leaves Page!',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
+        
       ),
     );
   }

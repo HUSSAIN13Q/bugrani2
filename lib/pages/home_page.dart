@@ -9,6 +9,8 @@ import '../widgets/UpcomingMeetingsSection.dart';
 import 'NewsPage.dart';
 import 'InboxPage.dart';
 import 'CommunityPage.dart';
+import '../widgets/custom_widget_container.dart'; // Import the new file
+import '../widgets/HeaderSection.dart'; // Import the new file
 
 class HomePage extends StatefulWidget {
   @override
@@ -20,22 +22,26 @@ class _HomePageState extends State<HomePage> {
   bool isExpanded = true;
   List<CustomWidgetContainer> customWidgets = [
     CustomWidgetContainer(
-      title: 'Map Section',
+      title: ' Head office Maps',
+      icon: Icons.map, // Add icon
       child: MapSection(),
       onRemoveWidget: () {},
     ),
     CustomWidgetContainer(
-      title: 'Leaves Section',
+      title: 'Leaves ',
+      icon: Icons.event_note, // Add icon
       child: LeavesPageButton(),
       onRemoveWidget: () {},
     ),
     CustomWidgetContainer(
-      title: 'Special Offers Section',
+      title: 'Special Offers ',
+      icon: Icons.local_offer, // Add icon
       child: SpecialOffersSection(),
       onRemoveWidget: () {},
     ),
     CustomWidgetContainer(
-      title: 'Upcoming Meetings Section',
+      title: 'Upcoming Meetings ',
+      icon: Icons.people_alt_outlined, // Add icon
       child: UpcomingMeetingsSection(),
       onRemoveWidget: () {},
     ),
@@ -45,10 +51,26 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       customWidgets.add(CustomWidgetContainer(
         title: title,
+        icon: _getIconByTitle(title), // Add icon
         child: _getWidgetByTitle(title),
         onRemoveWidget: () {},
       ));
     });
+  }
+
+  IconData _getIconByTitle(String title) {
+    switch (title) {
+      case 'Map Section':
+        return Icons.map;
+      case 'Leaves Section':
+        return Icons.event_note;
+      case 'Special Offers Section':
+        return Icons.local_offer;
+      case 'Upcoming Meetings Section':
+        return Icons.meeting_room;
+      default:
+        return Icons.widgets;
+    }
   }
 
   Widget _getWidgetByTitle(String title) {
@@ -171,6 +193,7 @@ class _HomePageState extends State<HomePage> {
                       setState(() {
                         customWidgets[index] = CustomWidgetContainer(
                           title: customWidgets[index].title,
+                          icon: customWidgets[index].icon, // Add icon
                           child: customWidgets[index].child,
                           isVisible: false,
                           onRemoveWidget: () {},
@@ -186,43 +209,19 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.white,
         items: [
           BottomNavigationBarItem(
-            icon: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(Icons.home),
-            ),
+            icon: Icon(Icons.home),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(Icons.people),
-            ),
+            icon: Icon(Icons.people),
             label: 'Community',
           ),
           BottomNavigationBarItem(
-            icon: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(Icons.inbox),
-            ),
+            icon: Icon(Icons.inbox),
             label: 'Inbox',
           ),
           BottomNavigationBarItem(
-            icon: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(Icons.article),
-            ),
+            icon: Icon(Icons.article),
             label: 'News',
           ),
         ],
@@ -279,6 +278,7 @@ class HomePageContent extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: CustomWidgetContainer(
                   title: widget.title,
+                  icon: widget.icon, // Add icon
                   child: widget.child,
                   onRemoveWidget: () => onRemoveWidget(index),
                 ),
@@ -287,272 +287,6 @@ class HomePageContent extends StatelessWidget {
           }).toList(),
         ],
       ),
-    );
-  }
-}
-
-class CustomWidgetContainer extends StatefulWidget {
-  final String title;
-  final Widget child;
-  final bool isVisible;
-  final VoidCallback onRemoveWidget;
-
-  const CustomWidgetContainer({
-    Key? key,
-    required this.title,
-    required this.child,
-    this.isVisible = true,
-    required this.onRemoveWidget,
-  }) : super(key: key);
-
-  @override
-  _CustomWidgetContainerState createState() => _CustomWidgetContainerState();
-}
-
-class _CustomWidgetContainerState extends State<CustomWidgetContainer> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                widget.title,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              IconButton(
-                onPressed: widget.onRemoveWidget,
-                icon: Icon(Icons.remove_circle, color: Colors.orange),
-              ),
-            ],
-          ),
-          widget.child,
-        ],
-      ),
-    );
-  }
-}
-
-class AddWidgetDialog extends StatefulWidget {
-  final Function(String) onAddWidget;
-  final List<String> hiddenWidgets;
-
-  const AddWidgetDialog({required this.onAddWidget, required this.hiddenWidgets});
-
-  @override
-  _AddWidgetDialogState createState() => _AddWidgetDialogState();
-}
-
-class _AddWidgetDialogState extends State<AddWidgetDialog> {
-  late List<String> availableWidgets;
-
-  @override
-  void initState() {
-    super.initState();
-    availableWidgets = List.from(widget.hiddenWidgets);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Add Widget',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 16),
-            SingleChildScrollView(
-              child: Column(
-                children: availableWidgets.map((name) {
-                  return ListTile(
-                    title: Text(name),
-                    trailing: Icon(Icons.add_circle, color: Colors.blue),
-                    onTap: () {
-                      widget.onAddWidget(name);
-                      setState(() {
-                        availableWidgets.remove(name);
-                      });
-                    },
-                  );
-                }).toList(),
-              ),
-            ),
-            SizedBox(height: 16),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              style: TextButton.styleFrom(
-                backgroundColor: Colors.orange,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-              child: Text(
-                'Close',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-
-
-class HeaderSection extends StatefulWidget {
-  final bool isExpanded;
-
-  const HeaderSection({Key? key, required this.isExpanded}) : super(key: key);
-
-  @override
-  _HeaderSectionState createState() => _HeaderSectionState();
-}
-
-class _HeaderSectionState extends State<HeaderSection> {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                blurRadius: 8,
-                offset: Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Meshari alhouli',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-              SizedBox(height: 4),
-              Text(
-                'UI Design / IT Department',
-                style: TextStyle(fontSize: 14, color: Colors.black54),
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Total work this month',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  WorkStats(title: 'Working day', value: '30', unit: 'Days'),
-                  VerticalDivider(color: Colors.grey),
-                  WorkStats(
-                    title: 'Late',
-                    value: '0',
-                    unit: 'Minutes',
-                    valueColor: Colors.orange,
-                  ),
-                  VerticalDivider(color: Colors.grey),
-                  WorkStats(title: 'Overtime', value: '15', unit: 'Hours'),
-                ],
-              ),
-            ],
-          ),
-        ),
-        if (widget.isExpanded) ...[
-          SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
-                padding: EdgeInsets.symmetric(vertical: 20),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.ads_click_outlined, color: Colors.white),
-                  SizedBox(width: 8),
-                  Text(
-                    'Click to Check In',
-                    style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              CheckButton(
-                title: 'Check in',
-                time: '-',
-                status: '',
-                icon: Icons.check_circle,
-              ),
-              SizedBox(width: 16),
-              CheckButton(
-                title: 'Check out',
-                time: '-',
-                status: '',
-                icon: Icons.logout,
-              ),
-            ],
-          ),
-        ],
-      ],
     );
   }
 }
@@ -599,77 +333,7 @@ class LeavesPageButton extends StatelessWidget {
   }
 }
 
-class CheckButton extends StatelessWidget {
-  final String title;
-  final String time;
-  final String status;
-  final IconData icon;
-  final Color? statusColor;
 
-  const CheckButton({required this.title, required this.time, required this.status, required this.icon, this.statusColor});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 190,
-      height: 130,
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 6,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 30, color: Colors.blue),
-          SizedBox(height: 8),
-          Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-          Text(time.isEmpty ? '-' : time, style: TextStyle(fontWeight: FontWeight.bold)),
-          if (status.isNotEmpty)
-            Text(
-              status,
-              style: TextStyle(color: statusColor ?? (status == 'on time' ? Colors.green : Colors.red), fontSize: 12),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class WorkStats extends StatelessWidget {
-  final String title;
-  final String value;
-  final String unit;
-  final Color? valueColor;
-  final Color? unitColor;
-
-  const WorkStats({
-    required this.title,
-    required this.value,
-    required this.unit,
-    this.valueColor,
-    this.unitColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
-        Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: valueColor ?? Colors.orange)),
-        if (unit.isNotEmpty)
-          Text(unit, style: TextStyle(color: unitColor ?? Colors.black)),
-      ],
-    );
-  }
-}
 
 class SectionContainer extends StatelessWidget {
   final String title;

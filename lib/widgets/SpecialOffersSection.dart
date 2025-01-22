@@ -8,16 +8,7 @@ class SpecialOffersSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(Icons.local_offer_outlined, size: 24, color: Colors.black),
-              SizedBox(width: 8),
-              Text(
-                'Special Offers',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
+          
           SizedBox(height: 16),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
