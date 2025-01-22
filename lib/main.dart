@@ -1,6 +1,5 @@
 import 'package:bugrani2/pages/CommunityPage.dart';
 import 'package:bugrani2/pages/home_page.dart';
-import 'package:bugrani2/pages/leaves_page.dart';
 import 'package:bugrani2/providers/leaves_provider.dart';
 import 'package:bugrani2/providers/workshop_provider.dart';
 import 'package:bugrani2/sign_in/forget_pass.dart';
@@ -27,7 +26,7 @@ final GoRouter _router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => CommunityPage(),
+      builder: (context, state) => SignInPage(),
     ),
     GoRoute(
       path: '/forget_pass',
