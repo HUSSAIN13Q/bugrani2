@@ -1,3 +1,4 @@
+import 'package:bugrani2/pages/NotificationPage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'leaves_page.dart';
@@ -8,7 +9,6 @@ import '../widgets/UpcomingMeetingsSection.dart';
 import 'NewsPage.dart';
 import 'InboxPage.dart';
 import 'CommunityPage.dart';
-import 'NotificationPage.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -18,9 +18,71 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
   bool isExpanded = true;
+  List<CustomWidgetContainer> customWidgets = [
+    CustomWidgetContainer(
+      title: 'Map Section',
+      child: MapSection(),
+      onRemoveWidget: () {},
+    ),
+    CustomWidgetContainer(
+      title: 'Leaves Section',
+      child: LeavesPageButton(),
+      onRemoveWidget: () {},
+    ),
+    CustomWidgetContainer(
+      title: 'Special Offers Section',
+      child: SpecialOffersSection(),
+      onRemoveWidget: () {},
+    ),
+    CustomWidgetContainer(
+      title: 'Upcoming Meetings Section',
+      child: UpcomingMeetingsSection(),
+      onRemoveWidget: () {},
+    ),
+  ];
+
+  void addCustomWidget(String title) {
+    setState(() {
+      customWidgets.add(CustomWidgetContainer(
+        title: title,
+        child: _getWidgetByTitle(title),
+        onRemoveWidget: () {},
+      ));
+    });
+  }
+
+  Widget _getWidgetByTitle(String title) {
+    switch (title) {
+      case 'Map Section':
+        return MapSection();
+      case 'Leaves Section':
+        return LeavesPageButton();
+      case 'Special Offers Section':
+        return SpecialOffersSection();
+      case 'Upcoming Meetings Section':
+        return UpcomingMeetingsSection();
+      default:
+        return Container();
+    }
+  }
+
+  void showAddWidgetDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AddWidgetDialog(
+          onAddWidget: addCustomWidget,
+          hiddenWidgets: customWidgets.where((widget) => !widget.isVisible).map((widget) => widget.title).toList(),
+        );
+      },
+    );
+  }
 
   final List<Widget> _pages = [
-    HomePageContent(),
+    HomePageContent(
+      customWidgets: [],
+      onRemoveWidget: (index) {},
+    ),
     CommunityPage(),
     InboxPage(),
     NewsPage(),
@@ -102,7 +164,21 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           Expanded(
-            child: _pages[_currentIndex],
+            child: _currentIndex == 0
+                ? HomePageContent(
+                    customWidgets: customWidgets,
+                    onRemoveWidget: (index) {
+                      setState(() {
+                        customWidgets[index] = CustomWidgetContainer(
+                          title: customWidgets[index].title,
+                          child: customWidgets[index].child,
+                          isVisible: false,
+                          onRemoveWidget: () {},
+                        );
+                      });
+                    },
+                  )
+                : _pages[_currentIndex],
           ),
         ],
       ),
@@ -159,63 +235,204 @@ class _HomePageState extends State<HomePage> {
           });
         },
       ),
+      floatingActionButton: _currentIndex == 0
+          ? FloatingActionButton(
+              onPressed: showAddWidgetDialog,
+              backgroundColor: Colors.orange,
+              child: Text(
+                '+',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              shape: CircleBorder(),
+            )
+          : null,
     );
   }
 }
 
 class HomePageContent extends StatelessWidget {
+  final List<CustomWidgetContainer> customWidgets;
+  final Function(int) onRemoveWidget;
+
+  const HomePageContent({
+    Key? key,
+    required this.customWidgets,
+    required this.onRemoveWidget,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          flex: 5,
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(height: 16),
-                MapSection(),
-                SizedBox(height: 16), // Space between MapSection and LeavesPageButton
-                LeavesPageButton(),
-                SizedBox(height: 16), // Space between LeavesPageButton and SpecialOffersSection
-                SpecialOffersSection(), // Add SpecialOffersSection here
-                SizedBox(height: 16), // Space before UpcomingMeetingsSection
-                UpcomingMeetingsSection(), // Add UpcomingMeetingsSection here
-              ],
-            ),
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          SizedBox(height: 16),
+          ...customWidgets.asMap().entries.map((entry) {
+            int index = entry.key;
+            CustomWidgetContainer widget = entry.value;
+            return Visibility(
+              visible: widget.isVisible,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: CustomWidgetContainer(
+                  title: widget.title,
+                  child: widget.child,
+                  onRemoveWidget: () => onRemoveWidget(index),
+                ),
+              ),
+            );
+          }).toList(),
+        ],
+      ),
+    );
+  }
+}
+
+class CustomWidgetContainer extends StatefulWidget {
+  final String title;
+  final Widget child;
+  final bool isVisible;
+  final VoidCallback onRemoveWidget;
+
+  const CustomWidgetContainer({
+    Key? key,
+    required this.title,
+    required this.child,
+    this.isVisible = true,
+    required this.onRemoveWidget,
+  }) : super(key: key);
+
+  @override
+  _CustomWidgetContainerState createState() => _CustomWidgetContainerState();
+}
+
+class _CustomWidgetContainerState extends State<CustomWidgetContainer> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: Offset(0, 4),
           ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                widget.title,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              IconButton(
+                onPressed: widget.onRemoveWidget,
+                icon: Icon(Icons.remove_circle, color: Colors.orange),
+              ),
+            ],
+          ),
+          widget.child,
+        ],
+      ),
+    );
+  }
+}
+
+class AddWidgetDialog extends StatefulWidget {
+  final Function(String) onAddWidget;
+  final List<String> hiddenWidgets;
+
+  const AddWidgetDialog({required this.onAddWidget, required this.hiddenWidgets});
+
+  @override
+  _AddWidgetDialogState createState() => _AddWidgetDialogState();
+}
+
+class _AddWidgetDialogState extends State<AddWidgetDialog> {
+  late List<String> availableWidgets;
+
+  @override
+  void initState() {
+    super.initState();
+    availableWidgets = List.from(widget.hiddenWidgets);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
         ),
-      ],
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Add Widget',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 16),
+            SingleChildScrollView(
+              child: Column(
+                children: availableWidgets.map((name) {
+                  return ListTile(
+                    title: Text(name),
+                    trailing: Icon(Icons.add_circle, color: Colors.blue),
+                    onTap: () {
+                      widget.onAddWidget(name);
+                      setState(() {
+                        availableWidgets.remove(name);
+                      });
+                    },
+                  );
+                }).toList(),
+              ),
+            ),
+            SizedBox(height: 16),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.orange,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              child: Text(
+                'Close',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
 
-class CommunityPageContent extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text('Community Page Content'),
-    );
-  }
-}
 
-class InboxPageContent extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text('Inbox Page Content'),
-    );
-  }
-}
-
-class NewsPageContent extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text('News Page Content'),
-    );
-  }
-}
 
 class HeaderSection extends StatefulWidget {
   final bool isExpanded;
@@ -227,109 +444,6 @@ class HeaderSection extends StatefulWidget {
 }
 
 class _HeaderSectionState extends State<HeaderSection> {
-  String checkInStatus = '';
-  String checkInTime = '-';
-  String checkOutTime = '-';
-  int lateMinutes = 0;
-  bool isCheckedIn = false;
-  bool isCheckedOut = false;
-  String workMessage = '';
-
-  void _checkIn() {
-    final now = DateTime.now();
-    final onTimeStart = DateFormat('HH:mm').parse('07:00');
-    final onTimeEnd = DateFormat('HH:mm').parse('08:30');
-    final lateEndTime = DateFormat('HH:mm').parse('19:00');
-
-    setState(() {
-      checkInTime = DateFormat('hh:mm a').format(now);
-      if (now.isAfter(onTimeEnd) && now.isBefore(lateEndTime)) {
-        checkInStatus = 'late';
-        lateMinutes = now.difference(onTimeEnd).inMinutes;
-      } else if (now.isAfter(onTimeStart) && now.isBefore(onTimeEnd)) {
-        checkInStatus = 'on time';
-        lateMinutes = 0;
-      }
-      isCheckedIn = true;
-    });
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Image.asset('assets/images/map.png'),
-              SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  padding: EdgeInsets.symmetric(vertical: 20),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                child: Text(
-                  'Check In',
-                  style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  void _checkOut() {
-    final now = DateTime.now();
-    final checkInDateTime = DateFormat('hh:mm a').parse(checkInTime);
-    final workDuration = now.difference(checkInDateTime);
-    final workHours = workDuration.inHours;
-    final workMinutes = workDuration.inMinutes % 60;
-
-    setState(() {
-      checkOutTime = DateFormat('hh:mm a').format(now);
-      isCheckedOut = true;
-      workMessage = 'You completed ${workHours > 0 ? '$workHours hours and ' : ''}$workMinutes minutes today';
-    });
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Image.asset('assets/images/map.png'),
-              SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  padding: EdgeInsets.symmetric(vertical: 20),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                child: Text(
-                  'Check Out',
-                  style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -381,8 +495,8 @@ class _HeaderSectionState extends State<HeaderSection> {
                   VerticalDivider(color: Colors.grey),
                   WorkStats(
                     title: 'Late',
-                    value: lateMinutes >= 60 ? '${(lateMinutes / 60).floor()}' : '$lateMinutes',
-                    unit: lateMinutes >= 60 ? 'hours' : 'Minutes',
+                    value: '0',
+                    unit: 'Minutes',
                     valueColor: Colors.orange,
                   ),
                   VerticalDivider(color: Colors.grey),
@@ -397,7 +511,7 @@ class _HeaderSectionState extends State<HeaderSection> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: isCheckedIn ? _checkOut : _checkIn,
+              onPressed: () {},
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.orange,
                 padding: EdgeInsets.symmetric(vertical: 20),
@@ -411,7 +525,7 @@ class _HeaderSectionState extends State<HeaderSection> {
                   Icon(Icons.ads_click_outlined, color: Colors.white),
                   SizedBox(width: 8),
                   Text(
-                    isCheckedIn ? 'Click to Check Out' : 'Click to Check In',
+                    'Click to Check In',
                     style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                 ],
@@ -424,15 +538,15 @@ class _HeaderSectionState extends State<HeaderSection> {
             children: [
               CheckButton(
                 title: 'Check in',
-                time: checkInTime,
-                status: checkInStatus,
+                time: '-',
+                status: '',
                 icon: Icons.check_circle,
               ),
               SizedBox(width: 16),
               CheckButton(
                 title: 'Check out',
-                time: checkOutTime,
-                status: checkInStatus,
+                time: '-',
+                status: '',
                 icon: Icons.logout,
               ),
             ],
