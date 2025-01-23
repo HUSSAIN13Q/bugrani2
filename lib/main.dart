@@ -1,5 +1,6 @@
 import 'package:bugrani2/pages/CommunityPage.dart';
 import 'package:bugrani2/pages/home_page.dart';
+import 'package:bugrani2/providers/clubs_provider.dart';
 import 'package:bugrani2/providers/leaves_provider.dart';
 import 'package:bugrani2/providers/workshop_provider.dart';
 import 'package:bugrani2/sign_in/forget_pass.dart';
@@ -15,7 +16,8 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => LeavesProvider()),
-        ChangeNotifierProvider(create: (_) => WorkshopProvider())
+        ChangeNotifierProvider(create: (_) => WorkshopProvider()),
+        ChangeNotifierProvider(create: (_) => ClubsProvider())
       ],
       child: const MainApp(),
     ),
