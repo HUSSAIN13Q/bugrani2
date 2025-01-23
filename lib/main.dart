@@ -6,9 +6,7 @@ import 'package:bugrani2/providers/workshop_provider.dart';
 import 'package:bugrani2/sign_in/forget_pass.dart';
 import 'package:bugrani2/sign_in/sign_in_page.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
-import 'sign_in/auth_provider.dart';
+
 
 void main() {
   runApp(
@@ -17,7 +15,8 @@ void main() {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => LeavesProvider()),
         ChangeNotifierProvider(create: (_) => WorkshopProvider()),
-        ChangeNotifierProvider(create: (_) => ClubsProvider())
+        ChangeNotifierProvider(create: (_) => ClubsProvider()),
+        ChangeNotifierProvider(create: (_) => AttendanceProvider())
       ],
       child: const MainApp(),
     ),
@@ -51,9 +50,7 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routerConfig: _router,
-      debugShowCheckedModeBanner: false,
+
     );
   }
 }

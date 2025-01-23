@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage> {
           CustomWidgetContainer(
             title: 'Leaves',
             icon: Icons.event_note,
-            child: LeavesPage(),
+            child: LeavesPageButton(),
             isVisible: true,
             onRemoveWidget: () => _toggleWidgetVisibility('Leaves'),
           ),
