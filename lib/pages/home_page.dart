@@ -1,6 +1,7 @@
 import 'package:bugrani2/pages/NotificationPage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'leaves_page.dart';
 import '../widgets/BusinessCardDialog.dart';
 import '../widgets/MapSection.dart';
@@ -20,54 +21,112 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
   bool isExpanded = true;
-  List<CustomWidgetContainer> customWidgets = [
-    CustomWidgetContainer(
-      title: ' Head office Maps',
-      icon: Icons.map, // Add icon
-      child: MapSection(),
-      onRemoveWidget: () {},
-    ),
-    CustomWidgetContainer(
-      title: 'Leaves ',
-      icon: Icons.event_note, // Add icon
-      child: LeavesPageButton(),
-      onRemoveWidget: () {},
-    ),
-    CustomWidgetContainer(
-      title: 'Special Offers ',
-      icon: Icons.local_offer, // Add icon
-      child: SpecialOffersSection(),
-      onRemoveWidget: () {},
-    ),
-    CustomWidgetContainer(
-      title: 'Upcoming Meetings ',
-      icon: Icons.people_alt_outlined, // Add icon
-      child: UpcomingMeetingsSection(),
-      onRemoveWidget: () {},
-    ),
-  ];
+  List<CustomWidgetContainer> customWidgets = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCustomWidgets();
+  }
+
+  Future<void> _loadCustomWidgets() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? savedWidgets = prefs.getStringList('customWidgets');
+    if (savedWidgets != null) {
+      setState(() {
+        customWidgets = savedWidgets.map((title) {
+          return CustomWidgetContainer(
+            title: title,
+            icon: _getIconByTitle(title),
+            child: _getWidgetByTitle(title),
+            isVisible: true,
+            onRemoveWidget: () => _toggleWidgetVisibility(title),
+          );
+        }).toList();
+      });
+    } else {
+      setState(() {
+        customWidgets = [
+          CustomWidgetContainer(
+            title: 'Head office Maps',
+            icon: Icons.map,
+            child: MapSection(),
+            isVisible: true,
+            onRemoveWidget: () => _toggleWidgetVisibility('Head office Maps'),
+          ),
+          CustomWidgetContainer(
+            title: 'Leaves',
+            icon: Icons.event_note,
+            child: LeavesPage(),
+            isVisible: true,
+            onRemoveWidget: () => _toggleWidgetVisibility('Leaves'),
+          ),
+          CustomWidgetContainer(
+            title: 'Special Offers',
+            icon: Icons.local_offer,
+            child: SpecialOffersSection(),
+            isVisible: true,
+            onRemoveWidget: () => _toggleWidgetVisibility('Special Offers'),
+          ),
+          CustomWidgetContainer(
+            title: 'Upcoming Meetings',
+            icon: Icons.people_alt_outlined,
+            child: UpcomingMeetingsSection(),
+            isVisible: true,
+            onRemoveWidget: () => _toggleWidgetVisibility('Upcoming Meetings'),
+          ),
+        ];
+      });
+    }
+  }
+
+  void _saveCustomWidgets() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> widgetTitles = customWidgets.where((widget) => widget.isVisible).map((widget) => widget.title).toList();
+    await prefs.setStringList('customWidgets', widgetTitles);
+  }
+
+  void _toggleWidgetVisibility(String title) {
+    setState(() {
+      final index = customWidgets.indexWhere((widget) => widget.title == title);
+      if (index != -1) {
+        final widget = customWidgets[index];
+        customWidgets[index] = CustomWidgetContainer(
+          title: widget.title,
+          icon: widget.icon,
+          child: widget.child,
+          isVisible: !widget.isVisible,
+          onRemoveWidget: widget.onRemoveWidget,
+        );
+      }
+      _saveCustomWidgets();
+    });
+  }
 
   void addCustomWidget(String title) {
     setState(() {
-      customWidgets.add(CustomWidgetContainer(
-        title: title,
-        icon: _getIconByTitle(title), // Add icon
-        child: _getWidgetByTitle(title),
-        onRemoveWidget: () {},
-      ));
+      final widget = customWidgets.firstWhere((widget) => widget.title == title);
+      customWidgets[customWidgets.indexOf(widget)] = CustomWidgetContainer(
+        title: widget.title,
+        icon: widget.icon,
+        child: widget.child,
+        isVisible: true,
+        onRemoveWidget: widget.onRemoveWidget,
+      );
+      _saveCustomWidgets();
     });
   }
 
   IconData _getIconByTitle(String title) {
     switch (title) {
-      case 'Map Section':
+      case 'Head office Maps':
         return Icons.map;
-      case 'Leaves Section':
+      case 'Leaves':
         return Icons.event_note;
-      case 'Special Offers Section':
+      case 'Special Offers':
         return Icons.local_offer;
-      case 'Upcoming Meetings Section':
-        return Icons.meeting_room;
+      case 'Upcoming Meetings':
+        return Icons.people_alt_outlined;
       default:
         return Icons.widgets;
     }
@@ -75,13 +134,13 @@ class _HomePageState extends State<HomePage> {
 
   Widget _getWidgetByTitle(String title) {
     switch (title) {
-      case 'Map Section':
+      case 'Head office Maps':
         return MapSection();
-      case 'Leaves Section':
+      case 'Leaves':
         return LeavesPageButton();
-      case 'Special Offers Section':
+      case 'Special Offers':
         return SpecialOffersSection();
-      case 'Upcoming Meetings Section':
+      case 'Upcoming Meetings':
         return UpcomingMeetingsSection();
       default:
         return Container();
