@@ -1,5 +1,7 @@
+import 'package:bugrani2/pages/NotificationPage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'leaves_page.dart';
 import '../widgets/BusinessCardDialog.dart';
 import '../widgets/MapSection.dart';
@@ -8,7 +10,8 @@ import '../widgets/UpcomingMeetingsSection.dart';
 import 'NewsPage.dart';
 import 'InboxPage.dart';
 import 'CommunityPage.dart';
-import 'NotificationPage.dart';
+import '../widgets/custom_widget_container.dart'; // Import the new file
+import '../widgets/HeaderSection.dart'; // Import the new file
 
 class HomePage extends StatefulWidget {
   @override
@@ -17,9 +20,150 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
+  bool isExpanded = true;
+  List<CustomWidgetContainer> customWidgets = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCustomWidgets();
+  }
+
+  Future<void> _loadCustomWidgets() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? savedWidgets = prefs.getStringList('customWidgets');
+    if (savedWidgets != null) {
+      setState(() {
+        customWidgets = savedWidgets.map((title) {
+          return CustomWidgetContainer(
+            title: title,
+            icon: _getIconByTitle(title),
+            child: _getWidgetByTitle(title),
+            isVisible: true,
+            onRemoveWidget: () => _toggleWidgetVisibility(title),
+          );
+        }).toList();
+      });
+    } else {
+      setState(() {
+        customWidgets = [
+          CustomWidgetContainer(
+            title: 'Head office Maps',
+            icon: Icons.map,
+            child: MapSection(),
+            isVisible: true,
+            onRemoveWidget: () => _toggleWidgetVisibility('Head office Maps'),
+          ),
+          CustomWidgetContainer(
+            title: 'Leaves',
+            icon: Icons.event_note,
+            child: LeavesPage(),
+            isVisible: true,
+            onRemoveWidget: () => _toggleWidgetVisibility('Leaves'),
+          ),
+          CustomWidgetContainer(
+            title: 'Special Offers',
+            icon: Icons.local_offer,
+            child: SpecialOffersSection(),
+            isVisible: true,
+            onRemoveWidget: () => _toggleWidgetVisibility('Special Offers'),
+          ),
+          CustomWidgetContainer(
+            title: 'Upcoming Meetings',
+            icon: Icons.people_alt_outlined,
+            child: UpcomingMeetingsSection(),
+            isVisible: true,
+            onRemoveWidget: () => _toggleWidgetVisibility('Upcoming Meetings'),
+          ),
+        ];
+      });
+    }
+  }
+
+  void _saveCustomWidgets() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> widgetTitles = customWidgets.where((widget) => widget.isVisible).map((widget) => widget.title).toList();
+    await prefs.setStringList('customWidgets', widgetTitles);
+  }
+
+  void _toggleWidgetVisibility(String title) {
+    setState(() {
+      final index = customWidgets.indexWhere((widget) => widget.title == title);
+      if (index != -1) {
+        final widget = customWidgets[index];
+        customWidgets[index] = CustomWidgetContainer(
+          title: widget.title,
+          icon: widget.icon,
+          child: widget.child,
+          isVisible: !widget.isVisible,
+          onRemoveWidget: widget.onRemoveWidget,
+        );
+      }
+      _saveCustomWidgets();
+    });
+  }
+
+  void addCustomWidget(String title) {
+    setState(() {
+      final widget = customWidgets.firstWhere((widget) => widget.title == title);
+      customWidgets[customWidgets.indexOf(widget)] = CustomWidgetContainer(
+        title: widget.title,
+        icon: widget.icon,
+        child: widget.child,
+        isVisible: true,
+        onRemoveWidget: widget.onRemoveWidget,
+      );
+      _saveCustomWidgets();
+    });
+  }
+
+  IconData _getIconByTitle(String title) {
+    switch (title) {
+      case 'Head office Maps':
+        return Icons.map;
+      case 'Leaves':
+        return Icons.event_note;
+      case 'Special Offers':
+        return Icons.local_offer;
+      case 'Upcoming Meetings':
+        return Icons.people_alt_outlined;
+      default:
+        return Icons.widgets;
+    }
+  }
+
+  Widget _getWidgetByTitle(String title) {
+    switch (title) {
+      case 'Head office Maps':
+        return MapSection();
+      case 'Leaves':
+        return LeavesPageButton();
+      case 'Special Offers':
+        return SpecialOffersSection();
+      case 'Upcoming Meetings':
+        return UpcomingMeetingsSection();
+      default:
+        return Container();
+    }
+  }
+
+  void showAddWidgetDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AddWidgetDialog(
+          onAddWidget: addCustomWidget,
+          hiddenWidgets: customWidgets.where((widget) => !widget.isVisible).map((widget) => widget.title).toList(),
+        );
+      },
+    );
+  }
 
   final List<Widget> _pages = [
-    HomePageContent(),
+    HomePageContent(
+      customWidgets: [],
+      onRemoveWidget: (index) {},
+    ),
     CommunityPage(),
     InboxPage(),
     NewsPage(),
@@ -27,357 +171,180 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: _currentIndex == 0
-            ? AppBar(
-                backgroundColor: Color(0xFF2C80E6),
-                elevation: 0,
-                centerTitle: true,
-                title: Image.asset(
-                  'images/orangelogoonly.png',
-                  height: 40,
-                ),
-                leading: IconButton(
-                  icon: Icon(Icons.badge_outlined, size: 30, color: Colors.white),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: _currentIndex == 0
+          ? AppBar(
+              backgroundColor: Color(0xFF2C80E6),
+              elevation: 0,
+              centerTitle: true,
+              title: Image.asset(
+                'assets/images/orangelogoonly.png',
+                height: 40,
+              ),
+              leading: IconButton(
+                icon: Icon(Icons.badge_outlined, size: 30, color: Colors.white),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (_) => BusinessCardDialog(),
+                  );
+                },
+              ),
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.notifications_outlined, color: Colors.white, size: 30),
                   onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) => BusinessCardDialog(),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => NotificationPage()),
                     );
                   },
                 ),
-                actions: [
-                  IconButton(
-                    icon: Icon(Icons.notifications_outlined, color: Colors.white, size: 30),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => NotificationPage()),
-                      );
-                    },
+              ],
+            )
+          : null,
+      body: Column(
+        children: [
+          if (_currentIndex == 0)
+            Stack(
+              children: [
+                AnimatedContainer(
+                  duration: Duration(milliseconds: 300),
+                  height: isExpanded ? 470 : 260,
+                  decoration: BoxDecoration(
+                    color: Color(0xFF2C80E6),
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(40),
+                      bottomRight: Radius.circular(40),
+                    ),
                   ),
-                ],
-              )
-            : null,
-        body: _pages[_currentIndex],
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Colors.white,
-          items: [
-            BottomNavigationBarItem(
-              icon: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: HeaderSection(isExpanded: isExpanded),
+                  ),
                 ),
-                child: Icon(Icons.home),
-              ),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: IconButton(
+                      icon: Icon(
+                        isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          isExpanded = !isExpanded;
+                        });
+                      },
+                    ),
+                  ),
                 ),
-                child: Icon(Icons.people),
-              ),
-              label: 'Community',
+              ],
             ),
-            BottomNavigationBarItem(
-              icon: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(Icons.inbox),
-              ),
-              label: 'Inbox',
-            ),
-            BottomNavigationBarItem(
-              icon: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(Icons.article),
-              ),
-              label: 'News',
-            ),
-          ],
-          selectedItemColor: Colors.blue,
-          unselectedItemColor: Colors.black,
-          currentIndex: _currentIndex,
-          onTap: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-          },
-        ),
+          Expanded(
+            child: _currentIndex == 0
+                ? HomePageContent(
+                    customWidgets: customWidgets,
+                    onRemoveWidget: (index) {
+                      setState(() {
+                        customWidgets[index] = CustomWidgetContainer(
+                          title: customWidgets[index].title,
+                          icon: customWidgets[index].icon, // Add icon
+                          child: customWidgets[index].child,
+                          isVisible: false,
+                          onRemoveWidget: () {},
+                        );
+                      });
+                    },
+                  )
+                : _pages[_currentIndex],
+          ),
+        ],
       ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.white,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.people),
+            label: 'Community',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.inbox),
+            label: 'Inbox',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.article),
+            label: 'News',
+          ),
+        ],
+        selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.black,
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+      ),
+      floatingActionButton: _currentIndex == 0
+          ? FloatingActionButton(
+              onPressed: showAddWidgetDialog,
+              backgroundColor: Colors.orange,
+              child: Text(
+                '+',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              shape: CircleBorder(),
+            )
+          : null,
     );
   }
 }
 
 class HomePageContent extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          flex: 7,
-          child: HeaderSection(),
-        ),
-        Expanded(
-          flex: 5,
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(height: 16),
-                MapSection(),
-                SizedBox(height: 16), // Space between MapSection and LeavesPageButton
-                LeavesPageButton(),
-                SizedBox(height: 16), // Space between LeavesPageButton and SpecialOffersSection
-                SpecialOffersSection(), // Add SpecialOffersSection here
-                SizedBox(height: 16), // Space before UpcomingMeetingsSection
-                UpcomingMeetingsSection(), // Add UpcomingMeetingsSection here
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
+  final List<CustomWidgetContainer> customWidgets;
+  final Function(int) onRemoveWidget;
 
-class HeaderSection extends StatefulWidget {
-  @override
-  _HeaderSectionState createState() => _HeaderSectionState();
-}
-
-class _HeaderSectionState extends State<HeaderSection> {
-  String checkInStatus = '';
-  String checkInTime = '-';
-  String checkOutTime = '-';
-  int lateMinutes = 0;
-  bool isCheckedIn = false;
-  bool isCheckedOut = false;
-  String workMessage = '';
-
-  void _checkIn() {
-    final now = DateTime.now();
-    final onTimeStart = DateFormat('HH:mm').parse('07:00');
-    final onTimeEnd = DateFormat('HH:mm').parse('08:30');
-    final lateEndTime = DateFormat('HH:mm').parse('19:00');
-
-    setState(() {
-      checkInTime = DateFormat('hh:mm a').format(now);
-      if (now.isAfter(onTimeEnd) && now.isBefore(lateEndTime)) {
-        checkInStatus = 'late';
-        lateMinutes = now.difference(onTimeEnd).inMinutes;
-      } else if (now.isAfter(onTimeStart) && now.isBefore(onTimeEnd)) {
-        checkInStatus = 'on time';
-        lateMinutes = 0;
-      }
-      isCheckedIn = true;
-    });
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Image.asset('assets/images/map.png'),
-              SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  padding: EdgeInsets.symmetric(vertical: 20),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                child: Text(
-                  'Check In',
-                  style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  void _checkOut() {
-    final now = DateTime.now();
-    final checkInDateTime = DateFormat('hh:mm a').parse(checkInTime);
-    final workDuration = now.difference(checkInDateTime);
-    final workHours = workDuration.inHours;
-    final workMinutes = workDuration.inMinutes % 60;
-
-    setState(() {
-      checkOutTime = DateFormat('hh:mm a').format(now);
-      isCheckedOut = true;
-      workMessage = 'You completed ${workHours > 0 ? '$workHours hours and ' : ''}$workMinutes minutes today';
-    });
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Image.asset('assets/images/map.png'),
-              SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  padding: EdgeInsets.symmetric(vertical: 20),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                child: Text(
-                  'Check Out',
-                  style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
+  const HomePageContent({
+    Key? key,
+    required this.customWidgets,
+    required this.onRemoveWidget,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Color(0xFF2C80E6),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(40),
-          bottomRight: Radius.circular(40),
-        ),
-      ),
-      child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 8,
-                    offset: Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Meshari alhouli',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    'UI Design / IT Department',
-                    style: TextStyle(fontSize: 14, color: Colors.black54),
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    'Total work this month',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      WorkStats(title: 'Working day', value: '30', unit: 'Days'),
-                      VerticalDivider(color: Colors.grey),
-                      WorkStats(
-                        title: 'Late',
-                        value: lateMinutes >= 60 ? '${(lateMinutes / 60).floor()}' : '$lateMinutes',
-                        unit: lateMinutes >= 60 ? 'hours' : 'Minutes',
-                        valueColor: Colors.orange,
-                      ),
-                      VerticalDivider(color: Colors.grey),
-                      WorkStats(title: 'Overtime', value: '15', unit: 'Hours'),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: isCheckedIn ? _checkOut : _checkIn,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  padding: EdgeInsets.symmetric(vertical: 20),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.ads_click_outlined, color: Colors.white),
-                    SizedBox(width: 8),
-                    Text(
-                      isCheckedIn ? 'Click to Check Out' : 'Click to Check In',
-                      style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
-                    ),
-                  ],
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          SizedBox(height: 16),
+          ...customWidgets.asMap().entries.map((entry) {
+            int index = entry.key;
+            CustomWidgetContainer widget = entry.value;
+            return Visibility(
+              visible: widget.isVisible,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: CustomWidgetContainer(
+                  title: widget.title,
+                  icon: widget.icon, // Add icon
+                  child: widget.child,
+                  onRemoveWidget: () => onRemoveWidget(index),
                 ),
               ),
-            ),
-            SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                CheckButton(
-                  title: 'Check in',
-                  time: checkInTime,
-                  status: checkInStatus,
-                  icon: Icons.check_circle,
-                ),
-                SizedBox(width: 16),
-                CheckButton(
-                  title: 'Check out',
-                  time: checkOutTime,
-                  status: checkInStatus,
-                  icon: Icons.logout,
-                ),
-              ],
-            ),
-          ],
-        ),
+            );
+          }).toList(),
+        ],
       ),
     );
   }
@@ -403,9 +370,9 @@ class LeavesPageButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.2), // Adjust shadow color
-                blurRadius: 10, // Shadow blur radius
-                offset: Offset(0, 4), // Shadow offset
+                color: Colors.black.withOpacity(0.2),
+                blurRadius: 10,
+                offset: Offset(0, 4),
               ),
             ],
           ),
@@ -425,70 +392,7 @@ class LeavesPageButton extends StatelessWidget {
   }
 }
 
-class CheckButton extends StatelessWidget {
-  final String title;
-  final String time;
-  final String status;
-  final IconData icon;
-  final Color? statusColor;
 
-  const CheckButton({required this.title, required this.time, required this.status, required this.icon, this.statusColor});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 190,
-      height: 130,
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 6,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 30, color: Colors.blue),
-          SizedBox(height: 8),
-          Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-          Text(time.isEmpty ? '-' : time, style: TextStyle(fontWeight: FontWeight.bold)),
-          if (status.isNotEmpty)
-            Text(
-              status,
-              style: TextStyle(color: statusColor ?? (status == 'on time' ? Colors.green : Colors.red), fontSize: 12),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class WorkStats extends StatelessWidget {
-  final String title;
-  final String value;
-  final String unit;
-  final Color? valueColor;
-  final Color? unitColor;
-
-  const WorkStats({required this.title, required this.value, required this.unit, this.valueColor, this.unitColor});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
-        Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: valueColor ?? Colors.orange)),
-        if (unit.isNotEmpty) Text(unit, style: TextStyle(color: unitColor ?? Colors.black)),
-      ],
-    );
-  }
-}
 
 class SectionContainer extends StatelessWidget {
   final String title;
