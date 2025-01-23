@@ -7,12 +7,13 @@ environment:
   sdk: ^3.5.4
 
 dependencies:
+  dio: ^5.7.0
   flutter:
     sdk: flutter
   intl: ^0.17.0
-  provider: ^6.0.0 # Add the provider package
-  qr_flutter: ^4.0.0 # Add the qr_flutter package
-  shared_preferences: ^2.0.0 # Add the shared_preferences package
+  provider: ^6.0.0 # Ensure the provider package is included
+  qr_flutter: ^4.0.0
+  shared_preferences: ^2.0.0
 
 dev_dependencies:
   flutter_test:
