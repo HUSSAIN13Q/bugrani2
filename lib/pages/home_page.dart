@@ -164,7 +164,7 @@ class _HomePageState extends State<HomePage> {
       customWidgets: [],
       onRemoveWidget: (index) {},
     ),
-    CommunityPage(),
+    // CommunityPage(),
     InboxPage(),
     NewsPage(),
   ];

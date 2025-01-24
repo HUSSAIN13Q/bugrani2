@@ -10,7 +10,10 @@ class AttendanceService {
       final dio = await DioClient.getDio();
       final response = await dio.post(
         "$baseUrl/checkIn",
-        data: json.encode({"latitude": latitude, "longitude": longitude}),
+        data: json.encode({
+          "latitude": latitude,
+          "longitude": longitude,
+        }),
         options: Options(headers: {"Content-Type": "application/json"}),
       );
 
@@ -29,7 +32,10 @@ class AttendanceService {
       final dio = await DioClient.getDio();
       final response = await dio.post(
         "$baseUrl/checkOut",
-        data: json.encode({"latitude": latitude, "longitude": longitude}),
+        data: json.encode({
+          "latitude": latitude,
+          "longitude": longitude,
+        }),
         options: Options(headers: {"Content-Type": "application/json"}),
       );
 

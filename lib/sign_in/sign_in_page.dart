@@ -230,18 +230,18 @@ class SignInPage extends StatelessWidget {
           ),
 
           // Logo
-          Positioned(
-            top: 80,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: Image.asset(
-                'images/lastlogo.png',
-                width: 400,
-                height: 400,
-              ),
-            ),
-          ),
+          // Positioned(
+          //   top: 80,
+          //   left: 0,
+          //   right: 0,
+          //   child: Center(
+          //     child: Image.asset(
+          //       ' assets/images/lastlogo.png',
+          //       width: 400,
+          //       height: 400,
+          //     ),
+          //   ),
+          // ),
 
           // Blue Container with Login Form
           Positioned(

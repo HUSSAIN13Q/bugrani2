@@ -182,12 +182,17 @@ class HeaderSection extends StatelessWidget {
                   onPressed: attendanceProvider.isLoading
                       ? null
                       : () async {
-                          if (attendanceProvider.isCheckedIn) {
-                            await attendanceProvider.checkOut(25.276987, 55.296249);
-                          } else {
-                            await attendanceProvider.checkIn(25.276987, 55.296249);
+                          try {
+                            if (attendanceProvider.isCheckedIn) {
+                              await attendanceProvider.checkOut(25.276987, 55.296249);
+                            } else {
+                              await attendanceProvider.checkIn(25.276987, 55.296249);
+                            }
+                            Navigator.pop(context);
+                          } catch (error) {
+                            Navigator.pop(context);
+                            _showErrorDialog(context, error.toString());
                           }
-                          Navigator.pop(context);
                         },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
@@ -208,6 +213,26 @@ class HeaderSection extends StatelessWidget {
               ],
             ),
           ),
+        );
+      },
+    );
+  }
+
+  void _showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
         );
       },
     );

@@ -1,4 +1,5 @@
 
+import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const _baseUrl = 'http://localhost:8000/';
