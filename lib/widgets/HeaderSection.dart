@@ -65,7 +65,7 @@ class HeaderSection extends StatelessWidget {
                     valueColor: Colors.orange,
                   ),
                   VerticalDivider(color: Colors.grey),
-                  WorkStats(title: 'Overtime', value: '15', unit: 'Hours'),
+                  WorkStats(title: 'Work Hours', value: '', unit: 'Hours'),
                 ],
               ),
             ],
@@ -121,7 +121,9 @@ class HeaderSection extends StatelessWidget {
                   ),
                   child: CheckButton(
                     title: 'Check In',
-                    status: attendanceProvider.isCheckedIn ? 'Checked In' : 'Not Checked In',
+                    status: attendanceProvider.isCheckedIn
+                        ? 'Checked In at ${_formatTime(attendanceProvider.checkInTime)}'
+                        : 'Not Checked In',
                     icon: Icons.check_circle,
                     onPressed: () {},
                   ),
@@ -144,7 +146,9 @@ class HeaderSection extends StatelessWidget {
                   ),
                   child: CheckButton(
                     title: 'Check Out',
-                    status: attendanceProvider.isCheckedIn ? 'Not Checked Out' : 'Checked Out',
+                    status: attendanceProvider.isCheckedIn
+                        ? 'Not Checked Out'
+                        : 'Checked Out at ${_formatTime(attendanceProvider.checkOutTime)}',
                     icon: Icons.logout,
                     onPressed: () {},
                   ),
@@ -155,6 +159,18 @@ class HeaderSection extends StatelessWidget {
         ],
       ],
     );
+  }
+
+  String _formatTime(String dateTime) {
+    if (dateTime.isEmpty) {
+      return 'Invalid time';
+    }
+    try {
+      final time = DateTime.parse(dateTime).toLocal();
+      return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+    } catch (e) {
+      return 'Invalid time';
+    }
   }
 
   void _showCheckInOutDialog(BuildContext context, AttendanceProvider attendanceProvider) {
