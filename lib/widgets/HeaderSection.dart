@@ -23,7 +23,7 @@ class HeaderSection extends StatelessWidget {
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.2),
-                blurRadius: 8,
+                blurRadius: 50,
                 offset: Offset(0, 4),
               ),
             ],
@@ -114,7 +114,7 @@ class HeaderSection extends StatelessWidget {
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.2),
-                        blurRadius: 8,
+                        blurRadius: 50,
                         offset: Offset(0, 4),
                       ),
                     ],
@@ -137,7 +137,7 @@ class HeaderSection extends StatelessWidget {
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.2),
-                        blurRadius: 8,
+                        blurRadius: 50,
                         offset: Offset(0, 4),
                       ),
                     ],

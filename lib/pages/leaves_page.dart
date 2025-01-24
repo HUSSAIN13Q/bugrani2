@@ -8,6 +8,7 @@ class LeavesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Color(0xFF2C80E6),
         elevation: 0,
@@ -54,8 +55,7 @@ class LeavesPage extends StatelessWidget {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
-                    padding: EdgeInsets.symmetric(vertical: 10,
-                    horizontal:10 ),
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
@@ -101,10 +101,46 @@ class LeavesPage extends StatelessWidget {
           SizedBox(height: 16),
           // Placeholder for leave details (Empty for Backend Data)
           Expanded(
-            child: Center(
-              child: Text(
-                "No leave data available",
-                style: TextStyle(fontSize: 16, color: Colors.grey),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Card(
+                color: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                elevation: 15,
+                shadowColor: Colors.black.withOpacity(1.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Consumer<LeavesProvider>(
+                    builder: (context, leavesProvider, child) {
+                      if (leavesProvider.isLoading) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (leavesProvider.leaves.isEmpty) {
+                        return Center(
+                          child: Text(
+                            "No leave data available",
+                            style: TextStyle(fontSize: 16, color: Colors.grey),
+                          ),
+                        );
+                      } else {
+                        return ListView.builder(
+                          itemCount: leavesProvider.leaves.length,
+                          itemBuilder: (context, index) {
+                            final leave = leavesProvider.leaves[index];
+                            return ListTile(
+                              title: Text(leave.type),
+                              subtitle: Text(
+                                "${leave.startDate} to ${leave.endDate}\n${leave.description}",
+                              ),
+                              isThreeLine: true,
+                            );
+                          },
+                        );
+                      }
+                    },
+                  ),
+                ),
               ),
             ),
           ),
@@ -122,6 +158,8 @@ class LeavesPage extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0),
         ),
+        elevation: 8,
+        shadowColor: Colors.black.withOpacity(0.2),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -251,6 +289,8 @@ class _LeaveFormPageState extends State<LeaveFormPage> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
+                    elevation: 8,
+                    shadowColor: Colors.black.withOpacity(0.2),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16.0, vertical: 8.0),
