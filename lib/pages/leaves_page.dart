@@ -1,11 +1,24 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
-import 'package:bugrani2/providers/leaves_provider.dart';
 import 'package:bugrani2/sign_in/auth_provider.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:bugrani2/providers/leaves_provider.dart';
 
-class LeavesPage extends StatelessWidget {
+class LeavesPage extends StatefulWidget {
+  @override
+  _LeavesPageState createState() => _LeavesPageState();
+}
+
+class _LeavesPageState extends State<LeavesPage> {
+  @override
+  void initState() {
+    super.initState();
+    // Fetch leave balance and leaves only once
+    final leavesProvider = Provider.of<LeavesProvider>(context, listen: false);
+    leavesProvider.getLeaveBalance();
+    leavesProvider.getLeaves();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,7 +65,8 @@ class LeavesPage extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const LeaveFormPage()),
+                      MaterialPageRoute(
+                          builder: (context) => const LeaveFormPage()),
                     );
                   },
                   style: ElevatedButton.styleFrom(
@@ -74,13 +88,35 @@ class LeavesPage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 16),
-                // Leave Stats (Empty for Backend Data)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _leaveStatCard(context, "Sick Leave", "-", "-"),
-                    _leaveStatCard(context, "Annual Leave", "-", "-"),
-                  ],
+                // Leave Stats
+                Consumer<LeavesProvider>(
+                  builder: (context, leavesProvider, child) {
+                    if (leavesProvider.leaveBalance == null) {
+                      return CircularProgressIndicator();
+                    } else {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          _leaveStatCard(
+                            context,
+                            "Sick Leave",
+                            leavesProvider.leaveBalance!.sickUsed.toString(),
+                            (leavesProvider.leaveBalance!.sickEntitlement -
+                                    leavesProvider.leaveBalance!.sickUsed)
+                                .toString(),
+                          ),
+                          _leaveStatCard(
+                            context,
+                            "Annual Leave",
+                            leavesProvider.leaveBalance!.annualUsed.toString(),
+                            (leavesProvider.leaveBalance!.annualEntitlement -
+                                    leavesProvider.leaveBalance!.annualUsed)
+                                .toString(),
+                          ),
+                        ],
+                      );
+                    }
+                  },
                 ),
               ],
             ),
@@ -133,7 +169,7 @@ class LeavesPage extends StatelessWidget {
                             return ListTile(
                               title: Text(leave.type),
                               subtitle: Text(
-                                "${leave.startDate} to ${leave.endDate}\n${leave.description}",
+                                "${leave.startDate} to ${leave.endDate}\n${leave.description}\nStatus: ${leave.status}",
                               ),
                               isThreeLine: true,
                             );
@@ -151,7 +187,8 @@ class LeavesPage extends StatelessWidget {
     );
   }
 
-  Widget _leaveStatCard(BuildContext context, String title, String used, String remaining) {
+  Widget _leaveStatCard(
+      BuildContext context, String title, String used, String remaining) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.45,
       height: 120,
@@ -179,7 +216,8 @@ class LeavesPage extends StatelessWidget {
                     children: [
                       Text(
                         used,
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       Text(
                         "used",
@@ -191,7 +229,8 @@ class LeavesPage extends StatelessWidget {
                     children: [
                       Text(
                         remaining,
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       Text(
                         "remaining",
@@ -220,15 +259,8 @@ class _LeaveFormPageState extends State<LeaveFormPage> {
   String selectedLeaveType = 'Choose Your Leave Type';
   final List<String> leaveTypes = [
     'Choose Your Leave Type',
-    'Sick Leave',
-    'Annual Leave',
-    'Birthday Leave',
-    'Business Trip',
-    'Compensation-Off',
-    'Death Type A&B',
-    'Hospitalization',
-    'Hajj',
-    'Marriage',
+    'Sick',
+    'Annual',
   ];
 
   final TextEditingController startDateController = TextEditingController();
@@ -237,8 +269,23 @@ class _LeaveFormPageState extends State<LeaveFormPage> {
   String? uploadedFilePath;
 
   @override
+  void initState() {
+    super.initState();
+    if (selectedLeaveType == 'Annual') {
+      _fetchRecommendations();
+    }
+  }
+
+  void _fetchRecommendations() async {
+    final leavesProvider = Provider.of<LeavesProvider>(context, listen: false);
+    await leavesProvider.getLeaveRecommendations();
+  }
+
+  @override
   Widget build(BuildContext context) {
     context.read<AuthProvider>().initAuth();
+    final leavesProvider = Provider.of<LeavesProvider>(context);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -302,6 +349,9 @@ class _LeaveFormPageState extends State<LeaveFormPage> {
                         onChanged: (String? newValue) {
                           setState(() {
                             selectedLeaveType = newValue!;
+                            if (selectedLeaveType == 'Annual') {
+                              _fetchRecommendations();
+                            }
                           });
                         },
                         items: leaveTypes
@@ -320,7 +370,6 @@ class _LeaveFormPageState extends State<LeaveFormPage> {
             ),
           ),
           SizedBox(height: 16),
-          // Form Fields Section
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -399,27 +448,20 @@ class _LeaveFormPageState extends State<LeaveFormPage> {
                       color: Colors.black,
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: IconButton(
-                        icon: Icon(Icons.upload_file, size: 40, color: Colors.orange),
-                        onPressed: () async {
-                          FilePickerResult? result = await FilePicker.platform.pickFiles();
-                          if (result != null) {
-                            setState(() {
-                              uploadedFilePath = result.files.single.path;
-                            });
-                          }
-                        },
-                      ),
-                    ),
-                  ),
-                  if (uploadedFilePath != null)
-                    Text(
-                      "File uploaded: ${uploadedFilePath!.split('/').last}",
-                      style: TextStyle(fontSize: 14, color: Colors.grey),
+                  const SizedBox(height: 16),
+                  if (selectedLeaveType == 'Annual' &&
+                      leavesProvider.recommendations.isNotEmpty)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Recommendations:',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        ...leavesProvider.recommendations.map((recommendation) {
+                          return Text(recommendation);
+                        }).toList(),
+                      ],
                     ),
                 ],
               ),
