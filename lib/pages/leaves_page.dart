@@ -1,22 +1,34 @@
+import 'package:bugrani2/models/leave.dart';
 import 'package:bugrani2/sign_in/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:bugrani2/providers/leaves_provider.dart';
+import 'package:file_picker/file_picker.dart';
+
 
 class LeavesPage extends StatefulWidget {
   @override
   _LeavesPageState createState() => _LeavesPageState();
 }
 
-class _LeavesPageState extends State<LeavesPage> {
+class _LeavesPageState extends State<LeavesPage> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 3, vsync: this);
     // Fetch leave balance and leaves only once
     final leavesProvider = Provider.of<LeavesProvider>(context, listen: false);
     leavesProvider.getLeaveBalance();
     leavesProvider.getLeaves();
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   @override
@@ -140,7 +152,7 @@ class _LeavesPageState extends State<LeavesPage> {
           // Placeholder for leave details (Empty for Backend Data)
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
               child: Card(
                 color: Colors.white,
                 shape: RoundedRectangleBorder(
@@ -148,42 +160,119 @@ class _LeavesPageState extends State<LeavesPage> {
                 ),
                 elevation: 15,
                 shadowColor: Colors.black.withOpacity(1.0),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Consumer<LeavesProvider>(
-                    builder: (context, leavesProvider, child) {
-                      if (leavesProvider.isLoading) {
-                        return Center(child: CircularProgressIndicator());
-                      } else if (leavesProvider.leaves.isEmpty) {
-                        return Center(
-                          child: Text(
-                            "No leave data available",
-                            style: TextStyle(fontSize: 16, color: Colors.grey),
-                          ),
-                        );
-                      } else {
-                        return ListView.builder(
-                          itemCount: leavesProvider.leaves.length,
-                          itemBuilder: (context, index) {
-                            final leave = leavesProvider.leaves[index];
-                            return ListTile(
-                              title: Text(leave.type),
-                              subtitle: Text(
-                                "${leave.startDate} to ${leave.endDate}\n${leave.description}\nStatus: ${leave.status}",
-                              ),
-                              isThreeLine: true,
-                            );
+                child: Column(
+                  children: [
+                    TabBar(
+                      controller: _tabController,
+                      tabs: [
+                        Tab(text: "Pending"),
+                        Tab(text: "Approved"),
+                        Tab(text: "Rejected"),
+                      ],
+                      labelColor: Colors.blue, // Color for selected tab
+                      unselectedLabelColor: Colors.black, // Color for unselected tabs
+                      indicatorColor: Colors.blue, // Color for the underline
+                      indicatorWeight: 3.0, // Thickness of the underline
+                    ),
+                    Expanded(
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        padding: const EdgeInsets.all(16.0),
+                        child: Consumer<LeavesProvider>(
+                          builder: (context, leavesProvider, child) {
+                            if (leavesProvider.isLoading) {
+                              return Center(child: CircularProgressIndicator());
+                            } else if (leavesProvider.leaves.isEmpty) {
+                              return Center(
+                                child: Text(
+                                  "No leave data available",
+                                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                                ),
+                              );
+                            } else {
+                              return TabBarView(
+                                controller: _tabController,
+                                children: [
+                                  _buildLeaveList(leavesProvider.leaves.where((leave) => leave.status == 'Pending').toList()),
+                                  _buildLeaveList(leavesProvider.leaves.where((leave) => leave.status == 'Approved').toList()),
+                                  _buildLeaveList(leavesProvider.leaves.where((leave) => leave.status == 'Rejected').toList()),
+                                ],
+                              );
+                            }
                           },
-                        );
-                      }
-                    },
-                  ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildLeaveList(List<Leave> leaves) {
+    return ListView.builder(
+      itemCount: leaves.length,
+      itemBuilder: (context, index) {
+        final leave = leaves[index];
+        return Column(
+          children: [
+            ListTile(
+              trailing: Icon(Icons.picture_as_pdf, color: Colors.orange),
+              title: Text(
+                leave.type,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("${leave.startDate} to ${leave.endDate}\n${leave.description}"),
+                  SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Text(
+                        "Status: ",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: leave.status == 'Pending'
+                              ? Colors.grey
+                              : leave.status == 'Approved'
+                                  ? Colors.green
+                                  : Colors.red,
+                          borderRadius: BorderRadius.circular(15),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              spreadRadius: 1,
+                              blurRadius: 5,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          leave.status,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              isThreeLine: true,
+            ),
+            Divider(color: const Color.fromARGB(255, 0, 0, 0), thickness: 0.1), // Thin blue line
+          ],
+        );
+      },
     );
   }
 
@@ -259,19 +348,26 @@ class _LeaveFormPageState extends State<LeaveFormPage> {
   String selectedLeaveType = 'Choose Your Leave Type';
   final List<String> leaveTypes = [
     'Choose Your Leave Type',
-    'Sick',
-    'Annual',
+    'Sick Leave',
+    'Annual Leave', 
+    'Birthday Leave',
+    'Busnisstrip Leave', 
+    'Compensation Leave',
+    'Death Type A&B Leave',
+    'Hajj Leave',
+    'Marriage Leave',
   ];
 
   final TextEditingController startDateController = TextEditingController();
   final TextEditingController endDateController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   String? uploadedFilePath;
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    if (selectedLeaveType == 'Annual') {
+    if (selectedLeaveType == 'Annual Leave') {
       _fetchRecommendations();
     }
   }
@@ -279,6 +375,19 @@ class _LeaveFormPageState extends State<LeaveFormPage> {
   void _fetchRecommendations() async {
     final leavesProvider = Provider.of<LeavesProvider>(context, listen: false);
     await leavesProvider.getLeaveRecommendations();
+    await Future.delayed(Duration(seconds: 2));
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  Future<void> _pickDocument() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    if (result != null) {
+      setState(() {
+        uploadedFilePath = result.files.single.path;
+      });
+    }
   }
 
   @override
@@ -329,7 +438,7 @@ class _LeaveFormPageState extends State<LeaveFormPage> {
                 Card(
                   color: Colors.white,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+                    borderRadius: BorderRadius.circular(20.0), // More rounded
                   ),
                   elevation: 8,
                   shadowColor: Colors.black.withOpacity(0.2),
@@ -349,7 +458,7 @@ class _LeaveFormPageState extends State<LeaveFormPage> {
                         onChanged: (String? newValue) {
                           setState(() {
                             selectedLeaveType = newValue!;
-                            if (selectedLeaveType == 'Annual') {
+                            if (selectedLeaveType == 'Annual Leave') {
                               _fetchRecommendations();
                             }
                           });
@@ -361,7 +470,7 @@ class _LeaveFormPageState extends State<LeaveFormPage> {
                             child: Text(value),
                           );
                         }).toList(),
-                        borderRadius: BorderRadius.circular(10.0),
+                        borderRadius: BorderRadius.circular(20.0), // More rounded
                       ),
                     ),
                   ),
@@ -440,29 +549,108 @@ class _LeaveFormPageState extends State<LeaveFormPage> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Text(
-                    "Upload Your Document",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  if (selectedLeaveType == 'Annual' &&
-                      leavesProvider.recommendations.isNotEmpty)
+                  if (selectedLeaveType != 'Annual Leave')
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Recommendations:',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          "Upload Your Document",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
                         ),
-                        ...leavesProvider.recommendations.map((recommendation) {
-                          return Text(recommendation);
-                        }).toList(),
+                        SizedBox(height: 16),
+                        Center(
+                          child: GestureDetector(
+                            onTap: _pickDocument,
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 16.0),
+                              child: Icon(
+                                Icons.upload_file,
+                                size: 50,
+                                color: Colors.orange,
+                              ),
+                            ),
+                          ),
+                        ),
+                        if (uploadedFilePath != null)
+                          Text("Uploaded: $uploadedFilePath"),
                       ],
                     ),
+                  const SizedBox(height: 16),
+                  if (selectedLeaveType == 'Annual Leave')
+                    isLoading
+                        ? Expanded(
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
+                                  ),
+                                  SizedBox(height: 16),
+                                  Icon(Icons.android, size: 50, color: Colors.black),
+                                  SizedBox(height: 16),
+                                  Text(
+                                    'AI Recommendation',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : leavesProvider.recommendations.isNotEmpty
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Recommendations:',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(height: 8), // Add space between text and container
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.2),
+                                          spreadRadius: 2,
+                                          blurRadius: 10,
+                                          offset: Offset(0, 3),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: leavesProvider.recommendations.map((recommendation) {
+                                          return Padding(
+                                            padding: const EdgeInsets.symmetric(vertical: 4.0),
+                                            child: Text(
+                                              recommendation,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          );
+                                        }).toList(),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : Container(),
                 ],
               ),
             ),
@@ -494,19 +682,19 @@ class _LeaveFormPageState extends State<LeaveFormPage> {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.orange,
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
-                minimumSize: Size(double.infinity, 50),
-                maximumSize: Size(double.infinity, 50),
+                minimumSize: Size(double.infinity, 60),
+                maximumSize: Size(double.infinity, 60),
               ),
               child: const Text(
                 'Submit Leave Request',
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
-                  fontSize: 18,
+                  fontSize: 20,
                 ),
               ),
             ),
