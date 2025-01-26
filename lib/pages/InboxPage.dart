@@ -178,8 +178,6 @@ class InboxPage extends StatefulWidget {
 }
 
 class _InboxPageState extends State<InboxPage> {
-  // Default selection for Clubs
-
   @override
   void initState() {
     super.initState();
@@ -191,6 +189,7 @@ class _InboxPageState extends State<InboxPage> {
   Widget build(BuildContext context) {
     context.read<AuthProvider>().initAuth();
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           // Blue AppBar with Title and Logo , design the base of the page
@@ -201,8 +200,8 @@ class _InboxPageState extends State<InboxPage> {
                 decoration: const BoxDecoration(
                   color: Color(0xFF2C80E6),
                   borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(40),
-                    bottomRight: Radius.circular(40),
+                    bottomLeft: Radius.circular(50),
+                    bottomRight: Radius.circular(50),
                   ),
                 ),
               ),
@@ -232,10 +231,27 @@ class _InboxPageState extends State<InboxPage> {
             ],
           ),
           const SizedBox(height: 16),
-          // Tabs for Clubs and Workshops
-          // Tabs for Clubs and Workshops  i mean  the orange buttons to select the section
-
-          SizedBox(height: 16),
+          // Title for My Certificates with Icon
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.school, // Icon representing certificates
+                  color: Color.fromARGB(255, 0, 0, 0),
+                ),
+                SizedBox(width: 8),
+                Text(
+                  "My Certificates",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
           // Display Section Based on Selected Tab
           Expanded(
             child: MyWorkshopsSection(), // Ensure this widget is displayed
@@ -245,8 +261,6 @@ class _InboxPageState extends State<InboxPage> {
     );
   }
 }
-
-// Clubs Section (Empty for now)
 
 // Workshops Section
 class MyWorkshopsSection extends StatelessWidget {
@@ -304,10 +318,11 @@ class MyWorkshopsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 180,
+      width: double.infinity,
+      padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20), // Increased corner radius
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.5),
@@ -317,11 +332,9 @@ class MyWorkshopsCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Row(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -330,6 +343,7 @@ class MyWorkshopsCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
+                    color: Color(0xFF2C80E6), // Blue color for the title
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -337,7 +351,8 @@ class MyWorkshopsCard extends StatelessWidget {
                   date,
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.grey,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black, // Black color for the date
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -349,6 +364,11 @@ class MyWorkshopsCard extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+          Icon(
+            Icons.description, // Document icon
+            color: Colors.orange,
+            size: 30,
           ),
         ],
       ),

@@ -12,6 +12,7 @@ class CommunityPage extends StatefulWidget {
   @override
   _CommunityPageState createState() => _CommunityPageState();
 }
+
 class _CommunityPageState extends State<CommunityPage> {
   bool isClubsSelected = true; // Default selection for Clubs
 
@@ -27,6 +28,7 @@ class _CommunityPageState extends State<CommunityPage> {
   Widget build(BuildContext context) {
     context.read<AuthProvider>().initAuth();
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           // Blue AppBar with Title and Logo , design the base of the page
