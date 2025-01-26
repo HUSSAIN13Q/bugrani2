@@ -26,6 +26,7 @@
 // }
 import 'package:bugrani2/sign_in/user.dart';
 import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../services/client.dart';
 
 class AuthServices {
@@ -48,5 +49,10 @@ class AuthServices {
       return error.response!.data["error"]["message"];
     }
     return token;
+  }
+
+  Future<String?> getToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString("token");
   }
 }

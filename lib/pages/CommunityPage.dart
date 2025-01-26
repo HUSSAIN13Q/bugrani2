@@ -1,14 +1,17 @@
 import 'package:bugrani2/providers/clubs_provider.dart';
 import 'package:bugrani2/providers/workshop_provider.dart';
+import 'package:bugrani2/services/clubs_services.dart';
+import 'package:bugrani2/services/workshop_services.dart';
 import 'package:bugrani2/sign_in/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:bugrani2/pages/clubsInfo_page.dart';
+import 'package:bugrani2/models/club.dart';
 
 class CommunityPage extends StatefulWidget {
   @override
   _CommunityPageState createState() => _CommunityPageState();
 }
-
 class _CommunityPageState extends State<CommunityPage> {
   bool isClubsSelected = true; // Default selection for Clubs
 
@@ -79,13 +82,38 @@ class _CommunityPageState extends State<CommunityPage> {
                       isClubsSelected = true; // Switch to Clubs
                     });
                   },
-                  child: Text(
-                    '  Clubs',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: isClubsSelected ? Colors.orange : Colors.black,
-                    ),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Clubs',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: isClubsSelected ? Colors.orange : Colors.black,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ClubsInfoPage(),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.orange,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                        child: const Text(
+                          'Club Inbox',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 // Divider
@@ -151,6 +179,7 @@ class ClubsSection extends StatelessWidget {
             return Column(
               children: [
                 ClubsCard(
+                  id: club.id,
                   title: club.title,
                   description: club.description,
                 ),
@@ -190,6 +219,7 @@ class WorkshopsSection extends StatelessWidget {
             return Column(
               children: [
                 WorkshopsCard(
+                  id: workshop.id,
                   title: workshop.title,
                   date: workshop.date,
                   description: workshop.description,
@@ -206,11 +236,13 @@ class WorkshopsSection extends StatelessWidget {
 
 // Card Widget for Workshops
 class WorkshopsCard extends StatelessWidget {
+  final String id;
   final String title;
   final String date;
   final String description;
 
   const WorkshopsCard({
+    required this.id,
     required this.title,
     required this.date,
     required this.description,
@@ -254,8 +286,26 @@ class WorkshopsCard extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   // Handle Apply button press
+                  try {
+                    final response =
+                        await WorkshopService().applyForWorkshop(id);
+                    if (response['error'] != null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(response['error'])),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text('Applied for workshop successfully')),
+                      );
+                    }
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Failed to apply for workshop')),
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,
@@ -277,10 +327,12 @@ class WorkshopsCard extends StatelessWidget {
 }
 
 class ClubsCard extends StatelessWidget {
+  final String id;
   final String title;
   final String description;
 
   const ClubsCard({
+    required this.id,
     required this.title,
     required this.description,
   });
@@ -321,8 +373,25 @@ class ClubsCard extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   // Handle Apply button press
+                  try {
+                    final response = await ClubsService().applyForClub(id);
+                    if (response['error'] != null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(response['error'])),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text('Applied for club successfully')),
+                      );
+                    }
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Failed to apply for club')),
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,
