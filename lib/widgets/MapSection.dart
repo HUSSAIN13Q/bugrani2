@@ -68,20 +68,6 @@ class _MapSectionState extends State<MapSection> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(Icons.map, size: 24, color: Colors.black),
-              SizedBox(width: 8),
-              Text(
-                'The Map for Head Office',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-            ],
-          ),
           SizedBox(height: 16),
           Container(
             decoration: BoxDecoration(
@@ -105,7 +91,9 @@ class _MapSectionState extends State<MapSection> {
                     });
                   },
                   child: Icon(
-                    showAllFloors ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                    showAllFloors
+                        ? Icons.keyboard_arrow_up
+                        : Icons.keyboard_arrow_down,
                     size: 24,
                     color: Colors.black,
                   ),

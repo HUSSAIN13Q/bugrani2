@@ -36,16 +36,6 @@ class _UpcomingMeetingsSectionState extends State<UpcomingMeetingsSection> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(Icons.people_alt_outlined, size: 24, color: Colors.black),
-              SizedBox(width: 8),
-              Text(
-                'Upcoming Meetings',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
           SizedBox(height: 16),
           Container(
             padding: EdgeInsets.all(16),
@@ -218,8 +208,8 @@ class _GenerateMeetingDialogState extends State<GenerateMeetingDialog> {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 16),
-            _buildDropdownField(
-                'Choose Department', _departmentController, _departmentTeams.keys.toList()),
+            _buildDropdownField('Choose Department', _departmentController,
+                _departmentTeams.keys.toList()),
             SizedBox(height: 16),
             _buildDropdownField('Choose Team', _teamController,
                 _departmentTeams[_departmentController.text] ?? []),
@@ -371,8 +361,7 @@ class _GenerateMeetingDialogState extends State<GenerateMeetingDialog> {
     final meeting = {
       'title': '${_teamController.text} Meeting',
       'date': DateFormat('MMM dd, yyyy').format(_selectedDate!),
-      'description':
-          'Lead by Meshari Alhouli at ${_locationController.text}',
+      'description': 'Lead by Meshari Alhouli at ${_locationController.text}',
       'time': 'At ${_selectedTime!.format(context)}',
     };
 

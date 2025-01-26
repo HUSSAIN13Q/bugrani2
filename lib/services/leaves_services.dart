@@ -1,50 +1,5 @@
-
-// import 'package:dio/dio.dart';
-// import 'package:intl/intl.dart';
-// import 'client.dart'; // Import your global Dio client
-
-// class LeavesService {
-//   Future<Map<String, dynamic>> createLeave({
-//     required String type,
-//     required DateFormat startDate, // Now expecting string from the backend
-//     required DateFormat endDate, // Now expecting string from the backend
-//     required String description,
-//   }) async {
-//     try {
-//       final response = await dio.post(
-//         '/leaves', // Relative path, as the base URL is already set
-//         data: {
-//           "destination": type,
-//           "start_date": startDate,
-//           "end_date": endDate,
-//           "budget": description,
-//         },
-//       );
-//       print(response.statusCode);
-//       // Check for successful response
-//       if (response.statusCode == 200 || response.statusCode == 201) {
-//         print("Submitted Leave successfully: ${response.data}");
-//         return response.data;
-//       } else {
-//         throw Exception(
-//             "Failed to submit leave. Status code: ${response.statusCode}");
-//       }
-//     } catch (e) {
-//       print("Error submitting leave: $e");
-//       rethrow; // Forward the error to the caller
-//     }
-//   }
-
-//   Future<Response> getLeave() async {
-//     final response = await dio.get('/leaves');
-//     return response;
-//   }
-// }
-
-
-
-
 import 'package:dio/dio.dart';
+import 'package:bugrani2/sign_in/auth_services.dart';
 import 'client.dart'; // Import your global Dio client
 
 class LeavesService {
@@ -69,7 +24,67 @@ class LeavesService {
 
   Future<Response> getLeaves() async {
     try {
-      Response response = await dio.get('/leaves');
+      Response response = await dio.get('/leaves/all');
+      return response;
+    } on DioError catch (e) {
+      return e.response!;
+    }
+  }
+
+  Future<void> approveLeave(String leaveId) async {
+    try {
+      await dio.patch('/leaves/$leaveId/approve');
+    } on DioError catch (e) {
+      throw Exception(
+          'Error approving leave: ${e.response?.data['message'] ?? 'Unknown error'}');
+    }
+  }
+
+  Future<void> rejectLeave(String leaveId) async {
+    try {
+      await dio.patch('/leaves/$leaveId/reject');
+    } on DioError catch (e) {
+      throw Exception(
+          'Error rejecting leave: ${e.response?.data['message'] ?? 'Unknown error'}');
+    }
+  }
+
+  Future<Response> getLeaveBalance() async {
+    try {
+      // Get the token from AuthServices
+      String? token = await AuthServices().getToken();
+      if (token == null) {
+        throw Exception('Token not found');
+      }
+      Response response = await dio.get(
+        '/leaves/leaveBalance',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+      return response;
+    } on DioError catch (e) {
+      return e.response!;
+    }
+  }
+
+  Future<Response> getLeaveRecommendations() async {
+    try {
+      // Get the token from AuthServices
+      String? token = await AuthServices().getToken();
+      if (token == null) {
+        throw Exception('Token not found');
+      }
+      Response response = await dio.get(
+        '/leaves/recommendation',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
       return response;
     } on DioError catch (e) {
       return e.response!;
