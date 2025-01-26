@@ -84,38 +84,13 @@ class _CommunityPageState extends State<CommunityPage> {
                       isClubsSelected = true; // Switch to Clubs
                     });
                   },
-                  child: Row(
-                    children: [
-                      Text(
-                        'Clubs',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: isClubsSelected ? Colors.orange : Colors.black,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ClubsInfoPage(),
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.orange,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                        child: const Text(
-                          'Club Inbox',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ],
+                  child: Text(
+                    'Clubs',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: isClubsSelected ? Colors.orange : Colors.black,
+                    ),
                   ),
                 ),
                 // Divider

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:bugrani2/pages/clubsInfo_page.dart';
 
 class CommunitiesSection extends StatelessWidget {
   @override
@@ -6,21 +7,9 @@ class CommunitiesSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'My Communities',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
         SizedBox(height: 16),
-        CommunityItem(
-          title: 'Football Team Club',
-          subtitle: 'Announcement: Admin: All the players will be invited ...',
-          date: '03/01/2025',
-        ),
-        Divider(),
-        CommunityItem(
-          title: 'Financial Literacy Workshop',
-          subtitle: 'Workshop details to be announced.',
-          date: '',
+        Center(
+          child: ClubInboxButton(),
         ),
       ],
     );
@@ -57,6 +46,48 @@ class CommunityItem extends StatelessWidget {
           Text(subtitle, style: TextStyle(fontWeight: FontWeight.bold)),
           if (date.isNotEmpty) Text(date, style: TextStyle(fontWeight: FontWeight.bold)),
         ],
+      ),
+    );
+  }
+}
+
+class ClubInboxButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ClubsInfoPage()),
+          );
+        },
+        child: Container(
+          width: double.infinity,
+          height: 80,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                blurRadius: 10,
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Center(
+            child: Text(
+              'Clubs Inbox',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.blue,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

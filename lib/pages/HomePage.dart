@@ -12,6 +12,7 @@ import 'InboxPage.dart';
 import 'CommunityPage.dart';
 import '../widgets/custom_widget_container.dart'; // Import the new file
 import '../widgets/HeaderSection.dart'; // Import the new file
+import '../widgets/CommunitiesSection.dart'; // Import the CommunitiesSection
 
 class HomePage extends StatefulWidget {
   @override
@@ -75,6 +76,13 @@ class _HomePageState extends State<HomePage> {
             isVisible: true,
             onRemoveWidget: () => _toggleWidgetVisibility('Upcoming Meetings'),
           ),
+          CustomWidgetContainer(
+            title: 'Communities',
+            icon: Icons.group,
+            child: CommunitiesSection(),
+            isVisible: true,
+            onRemoveWidget: () => _toggleWidgetVisibility('Communities'),
+          ),
         ];
       });
     }
@@ -131,6 +139,8 @@ class _HomePageState extends State<HomePage> {
         return Icons.local_offer;
       case 'Upcoming Meetings':
         return Icons.people_alt_outlined;
+      case 'Communities':
+        return Icons.group;
       default:
         return Icons.widgets;
     }
@@ -146,6 +156,8 @@ class _HomePageState extends State<HomePage> {
         return SpecialOffersSection();
       case 'Upcoming Meetings':
         return UpcomingMeetingsSection();
+      case 'Communities':
+        return CommunitiesSection();
       default:
         return Container();
     }
