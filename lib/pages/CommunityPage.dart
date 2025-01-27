@@ -45,14 +45,14 @@ class _CommunityPageState extends State<CommunityPage> {
                 ),
               ),
               Positioned(
-                top: 50,
+                top: 40, // Moved up
                 left: MediaQuery.of(context).size.width / 2 - 25,
                 child: Image.asset(
                   'assets/images/orangelogoonly.png',
                   height: 50,
                 ),
               ),
-              Positioned(
+              const Positioned(
                 top: 110,
                 left: 0,
                 right: 0,

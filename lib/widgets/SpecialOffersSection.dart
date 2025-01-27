@@ -63,7 +63,7 @@ class OfferCard extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 8),
           child: SizedBox(
             height: 30,
-            width: 120,
+            width: 140, // Increased width
             child: ElevatedButton(
               onPressed: () {
                 _showOfferDialog(context, title, imageUrl);

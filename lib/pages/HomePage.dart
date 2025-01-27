@@ -64,21 +64,21 @@ class _HomePageState extends State<HomePage> {
           ),
           CustomWidgetContainer(
             title: 'Special Offers',
-            icon: Icons.local_offer,
+            icon: Icons.local_offer_outlined,
             child: SpecialOffersSection(),
             isVisible: true,
             onRemoveWidget: () => _toggleWidgetVisibility('Special Offers'),
           ),
           CustomWidgetContainer(
             title: 'Upcoming Meetings',
-            icon: Icons.people_alt_outlined,
+            icon: Icons.group_outlined,
             child: UpcomingMeetingsSection(),
             isVisible: true,
             onRemoveWidget: () => _toggleWidgetVisibility('Upcoming Meetings'),
           ),
           CustomWidgetContainer(
             title: 'Communities',
-            icon: Icons.group,
+            icon: Icons.groups,
             child: CommunitiesSection(),
             isVisible: true,
             onRemoveWidget: () => _toggleWidgetVisibility('Communities'),
@@ -274,9 +274,10 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.white, // Set background color to white
         items: [
           BottomNavigationBarItem(
+            backgroundColor: Colors.white,
             icon: Container(
               decoration: BoxDecoration(
                 color: Colors.white,

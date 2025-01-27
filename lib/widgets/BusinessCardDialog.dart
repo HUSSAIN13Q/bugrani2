@@ -1,7 +1,20 @@
 import 'package:flutter/material.dart';
 
-class BusinessCardDialog extends StatelessWidget {
+class BusinessCardDialog extends StatefulWidget {
   const BusinessCardDialog({Key? key}) : super(key: key);
+
+  @override
+  _BusinessCardDialogState createState() => _BusinessCardDialogState();
+}
+
+class _BusinessCardDialogState extends State<BusinessCardDialog> {
+  bool _isBarcodeClicked = false;
+
+  void _toggleBarcodeSize() {
+    setState(() {
+      _isBarcodeClicked = !_isBarcodeClicked;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,10 +48,13 @@ class BusinessCardDialog extends StatelessWidget {
                     color: Colors.black,
                   ),
                 ),
-                Image.asset(
-                  'images/meshriBcard.png',
-                  width: 50,
-                  height: 50,
+                GestureDetector(
+                  onTap: _toggleBarcodeSize,
+                  child: Image.asset(
+                    'images/meshriBcard.png',
+                    width: _isBarcodeClicked ? 100 : 50,
+                    height: _isBarcodeClicked ? 100 : 50,
+                  ),
                 ),
               ],
             ),
@@ -91,7 +107,7 @@ class BusinessCardDialog extends StatelessWidget {
               child: Text(
                 'Close',
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: Colors.blue,
                 ),

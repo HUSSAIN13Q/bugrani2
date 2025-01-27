@@ -16,6 +16,7 @@ dependencies:
   provider: ^6.1.2
   intl: ^0.20.1
   file_picker: ^5.2.7
+  visibility_detector: ^0.3.3
 
 dev_dependencies:
   flutter_test:

@@ -63,7 +63,7 @@ class _LeavesPageState extends State<LeavesPage> with SingleTickerProviderStateM
             ),
             child: Column(
               children: [
-                SizedBox(height: 16),
+                SizedBox(height: 10),
                 Text(
                   "Managing Leaves",
                   style: TextStyle(
@@ -425,7 +425,7 @@ class _LeaveFormPageState extends State<LeaveFormPage> {
             ),
             child: Column(
               children: [
-                SizedBox(height: 16),
+                SizedBox(height: 10),
                 Text(
                   "Leave Form",
                   style: TextStyle(

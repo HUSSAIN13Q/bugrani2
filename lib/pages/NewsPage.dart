@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:visibility_detector/visibility_detector.dart';
+import 'package:intl/intl.dart';
 
 class NewsPage extends StatelessWidget {
   @override
@@ -21,7 +23,7 @@ class NewsPage extends StatelessWidget {
                 ),
               ),
               Positioned(
-                top: 50,
+                top: 40, // Moved up
                 left: MediaQuery.of(context).size.width / 2 - 25,
                 child: Image.asset(
                   'assets/images/orangelogoonly.png', // Replace with your logo path
@@ -48,44 +50,16 @@ class NewsPage extends StatelessWidget {
 
           // News Content
           Expanded(
-            child: ListView(
+            child: ListView.builder(
               padding: EdgeInsets.all(16.0),
-              children: [
-                // Today's News Section
-                Text(
-                  "Today,",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                SizedBox(height: 16),
-                NewsCard(
-                  title: "Burgan Support AUK",
-                  description:
-                      "Burgan Bank continues to support local talent development at AUK's Career Growth Fair",
-                  imagePath: 'images/auk.webp',
-                ),
-                SizedBox(height: 24),
-
-                // Yesterday's News Section
-                Text(
-                  "Yesterday,",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                SizedBox(height: 16),
-                NewsCard(
-                  title: "Cyber Security Conference Concludes",
-                  description:
-                      "Cyber Security Conference organized by Burgan Bank concludes successfully.",
-                  imagePath: 'images/cybernew.jpeg',
-                ),
-              ],
+              itemCount: newsData.length,
+              itemBuilder: (context, index) {
+                return AnimatedNewsCard(
+                  title: newsData[index]['title']!,
+                  description: newsData[index]['description']!,
+                  imagePath: newsData[index]['imagePath']!,
+                );
+              },
             ),
           ),
         ],
@@ -94,13 +68,30 @@ class NewsPage extends StatelessWidget {
   }
 }
 
-// Custom Widget for News Card
-class NewsCard extends StatelessWidget {
+const newsData = [
+  {
+    'title': "NEXUS 2024",
+    'description': "Burgan Bank concludes its sponsorship of NEXUS 2024...the largest event in the field of technology and innovation in Kuwait",
+    'imagePath': 'images/news3.jpg',
+  },
+  {
+    'title': "Burgan Support AUK",
+    'description': "Burgan Bank continues to support local talent development at AUK's Career Growth Fair",
+    'imagePath': 'images/auk.webp',
+  },
+  {
+    'title': "Cyber Security Conference Concludes",
+    'description': "Cyber Security Conference organized by Burgan Bank concludes successfully.",
+    'imagePath': 'images/cybernew.jpeg',
+  },
+];
+
+class AnimatedNewsCard extends StatefulWidget {
   final String title;
   final String description;
   final String imagePath;
 
-  const NewsCard({
+  const AnimatedNewsCard({
     Key? key,
     required this.title,
     required this.description,
@@ -108,57 +99,111 @@ class NewsCard extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  _AnimatedNewsCardState createState() => _AnimatedNewsCardState();
+}
+
+class _AnimatedNewsCardState extends State<AnimatedNewsCard> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+    _animation = Tween<double>(begin: 1.0, end: 1.05).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onHover(PointerEvent details) {
+    _controller.forward();
+  }
+
+  void _onExit(PointerEvent details) {
+    _controller.reverse();
+  }
+
+  void _onTap() {
+    _controller.forward();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 16.0), // Add space between cards
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.8), // Shadow color
-            blurRadius: 30, // Shadow blur radius
-            offset: Offset(0, 4), // Shadow offset
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Text(
-              title,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
-          ),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: Container(
-              height: 200,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(imagePath),
-                  fit: BoxFit.cover, // Ensures the image is zoomed in
+    return MouseRegion(
+      onEnter: _onHover,
+      onExit: _onExit,
+      child: GestureDetector(
+        onTap: _onTap,
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            return Transform.scale(
+              scale: _animation.value,
+              child: child,
+            );
+          },
+          child: Container(
+            margin: EdgeInsets.only(bottom: 16.0), // Add space between cards
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.8), // Shadow color
+                  blurRadius: 30, // Shadow blur radius
+                  offset: Offset(0, 4), // Shadow offset
                 ),
-              ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Text(
+                    widget.title,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Container(
+                    height: 250, // Increased height
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage(widget.imagePath),
+                        fit: BoxFit.cover, // Ensures the image is zoomed in
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Text(
+                    widget.description,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.black54,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Text(
-              description,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.black54,
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

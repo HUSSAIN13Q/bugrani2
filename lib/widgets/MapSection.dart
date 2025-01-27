@@ -182,7 +182,7 @@ class FloorPage extends StatelessWidget {
                 ),
               ),
               Positioned(
-                top: 50,
+                top: 40,
                 left: MediaQuery.of(context).size.width / 2 - 25,
                 child: Image.asset(
                   'assets/images/orangelogoonly.png',
@@ -190,14 +190,17 @@ class FloorPage extends StatelessWidget {
                 ),
               ),
               Positioned(
-                top: 100,
-                left: MediaQuery.of(context).size.width / 2 - 80,
-                child: Text(
-                  "Head Office Map",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
+                top: 110,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: Text(
+                    "Head Office Map",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
