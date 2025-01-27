@@ -1,4 +1,5 @@
 import 'package:bugrani2/providers/inbox_provider.dart';
+import 'package:bugrani2/providers/search_provider.dart';
 import 'package:bugrani2/sign_in/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -10,11 +11,20 @@ class InboxPage extends StatefulWidget {
 }
 
 class _InboxPageState extends State<InboxPage> {
+  late TextEditingController _searchController;
+
   @override
   void initState() {
     super.initState();
+    _searchController = TextEditingController();
     // Fetch myworkshops when the page is initialized
     Provider.of<MyWorkshopProvider>(context, listen: false).getMyWorkshop();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -27,6 +37,93 @@ class _InboxPageState extends State<InboxPage> {
           // Blue AppBar with Title and Logo , design the base of the page
           _buildAppBar(context, "Inbox"),
           const SizedBox(height: 16),
+          // Title for Searching on Employees with Icon
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.search, // Icon representing search
+                  color: Color.fromARGB(255, 0, 0, 0),
+                ),
+                SizedBox(width: 8),
+                Text(
+                  "Searching on Employees",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          // Search Bar
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.9, // Smaller width
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 10,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: 'Search employees...',
+                  prefixIcon: Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0), // Rounded corners
+                    borderSide: BorderSide.none,
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  contentPadding: EdgeInsets.symmetric(vertical: 10.0),
+                ),
+                onSubmitted: (query) {
+                  Provider.of<SearchProvider>(context, listen: false)
+                      .searchEmployees(query);
+                },
+              ),
+            ),
+          ),
+          // Search Results
+          Expanded(
+            child: Consumer<SearchProvider>(
+              builder: (context, searchProvider, child) {
+                if (searchProvider.isLoading) {
+                  return Center(child: CircularProgressIndicator());
+                }
+
+                if (searchProvider.searchResults.isEmpty) {
+                  return Center(child: Text('Search to Employees'));
+                }
+
+                return ListView.builder(
+                  itemCount: searchProvider.searchResults.length,
+                  itemBuilder: (context, index) {
+                    final employee = searchProvider.searchResults[index];
+                    return ListTile(
+                      title: Text(employee['name']),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(employee['email']),
+                          Text(employee['title']), // Display the title from the database
+                        ],
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 5),
           // Title for My Certificates with Icon
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0),
