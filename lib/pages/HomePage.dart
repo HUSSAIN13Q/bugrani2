@@ -1,6 +1,8 @@
 import 'package:bugrani2/pages/NotificationPage.dart';
+import 'package:bugrani2/providers/search_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'leaves_page.dart';
 import '../widgets/BusinessCardDialog.dart';
@@ -23,11 +25,19 @@ class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
   bool isExpanded = true;
   List<CustomWidgetContainer> customWidgets = [];
+  late TextEditingController _searchController;
 
   @override
   void initState() {
     super.initState();
+    _searchController = TextEditingController();
     _loadCustomWidgets();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadCustomWidgets() async {
@@ -180,6 +190,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    void initState() {}
     final List<Widget> _pages = [
       HomePageContent(
         customWidgets: customWidgets,
@@ -224,10 +235,66 @@ class _HomePageState extends State<HomePage> {
                   },
                 ),
               ],
+              bottom: PreferredSize(
+                preferredSize: Size.fromHeight(48.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: 'Search employees...',
+                      prefixIcon: Icon(Icons.search),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide.none,
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                    onSubmitted: (query) {
+                      Provider.of<SearchProvider>(context, listen: false)
+                          .searchEmployees(query);
+                    },
+                  ),
+                ),
+              ),
             )
           : null,
       body: Column(
         children: [
+          _currentIndex == 0
+              ? Expanded(
+                  child: Consumer<SearchProvider>(
+                    builder: (context, searchProvider, child) {
+                      if (searchProvider.isLoading) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+
+                      if (searchProvider.searchResults.isEmpty) {
+                        return Center(child: Text('No employees found.'));
+                      }
+
+                      return ListView.builder(
+                        itemCount: searchProvider.searchResults.length,
+                        itemBuilder: (context, index) {
+                          final employee = searchProvider.searchResults[index];
+                          return ListTile(
+                            title: Text(employee['name']),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(employee['email']),
+                                Text(employee[
+                                    'title']), // Display the title from the database
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                )
+              : Expanded(child: _pages[_currentIndex]),
           if (_currentIndex == 0)
             Stack(
               children: [

@@ -4,6 +4,7 @@ import 'package:bugrani2/pages/HomePage.dart';
 import 'package:bugrani2/providers/clubs_provider.dart';
 import 'package:bugrani2/providers/inbox_provider.dart';
 import 'package:bugrani2/providers/leaves_provider.dart';
+import 'package:bugrani2/providers/search_provider.dart';
 import 'package:bugrani2/providers/workshop_provider.dart';
 import 'package:bugrani2/sign_in/forget_pass.dart';
 import 'package:bugrani2/sign_in/sign_in_page.dart';
@@ -23,6 +24,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => ClubsProvider()),
         ChangeNotifierProvider(create: (_) => MyWorkshopProvider()),
         ChangeNotifierProvider(create: (_) => AttendanceProvider()),
+        ChangeNotifierProvider(create: (_) => SearchProvider())
       ],
       child: const MainApp(),
     ),
