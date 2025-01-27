@@ -134,7 +134,7 @@ class _CommunityPageState extends State<CommunityPage> {
   }
 }
 
-// Clubs Section (Empty for now)
+// Clubs Section
 class ClubsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -229,8 +229,25 @@ class WorkshopsCard extends StatelessWidget {
     required this.description,
   });
 
+  String _getImageByTitle(String title) {
+    switch (title) {
+      case 'Digital Banking Workshop':
+        return 'assets/images/digitalbanking.jpg';
+      case 'Financial Literacy Workshop':
+        return 'assets/images/financialliteracy.png';
+      case 'Investment Workshop':
+        return 'assets/images/investment.png';
+      case 'Leadership Workshop':
+        return 'assets/images/leadership.jpg';
+      default:
+        return '';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final imagePath = _getImageByTitle(title);
+
     return Container(
       height: 180,
       decoration: BoxDecoration(
@@ -245,59 +262,74 @@ class WorkshopsCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Row(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Title: $title',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                Text('Date: $date'),
-                const SizedBox(height: 8),
-                Text('Description: $description'),
-              ],
+          if (imagePath.isNotEmpty)
+            ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                bottomLeft: Radius.circular(20),
+              ),
+              child: Image.asset(
+                imagePath,
+                width: 180, // Increased width
+                height: 180,
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-          Align(
-            alignment: Alignment.bottomRight,
+          Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ElevatedButton(
-                onPressed: () async {
-                  // Handle Apply button press
-                  try {
-                    final response =
-                        await WorkshopService().applyForWorkshop(id);
-                    if (response['error'] != null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(response['error'])),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                            content: Text('Applied for workshop successfully')),
-                      );
-                    }
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Failed to apply for workshop')),
-                    );
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Title: $title',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  Text('Date: $date'),
+                  const SizedBox(height: 8),
+                  Text('Description: $description'),
+                  Spacer(),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        // Handle Apply button press
+                        try {
+                          final response =
+                              await WorkshopService().applyForWorkshop(id);
+                          if (response['error'] != null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(response['error'])),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content:
+                                      Text('Applied for workshop successfully')),
+                            );
+                          }
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content:
+                                    Text('Failed to apply for workshop')),
+                          );
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child: const Text(
+                        'Apply',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
                   ),
-                ),
-                child: const Text(
-                  'Apply',
-                  style: TextStyle(color: Colors.white),
-                ),
+                ],
               ),
             ),
           ),
@@ -307,6 +339,7 @@ class WorkshopsCard extends StatelessWidget {
   }
 }
 
+// Card Widget for Clubs
 class ClubsCard extends StatelessWidget {
   final String id;
   final String title;
@@ -318,8 +351,27 @@ class ClubsCard extends StatelessWidget {
     required this.description,
   });
 
+  String _getImageByTitle(String title) {
+    switch (title) {
+      case 'Art Club':
+        return 'assets/images/artclub.jpeg';
+      case 'Book Club':
+        return 'assets/images/bookclub.jpg';
+      case 'knitting Club':
+        return 'assets/images/knittingclub.jpeg';
+      case 'Football Club':
+        return 'assets/images/footballclub.jpeg';
+      case 'Popculture Club':
+        return 'assets/images/popculture.jpg';
+      default:
+        return '';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final imagePath = _getImageByTitle(title);
+
     return Container(
       height: 180,
       decoration: BoxDecoration(
@@ -334,56 +386,72 @@ class ClubsCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Row(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Title: $title',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                Text('Description: $description'),
-              ],
+          if (imagePath.isNotEmpty)
+            ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                bottomLeft: Radius.circular(20),
+              ),
+              child: Image.asset(
+                imagePath,
+                width: 180, // Increased width
+                height: 180,
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-          Align(
-            alignment: Alignment.bottomRight,
+          Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ElevatedButton(
-                onPressed: () async {
-                  // Handle Apply button press
-                  try {
-                    final response = await ClubsService().applyForClub(id);
-                    if (response['error'] != null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(response['error'])),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                            content: Text('Applied for club successfully')),
-                      );
-                    }
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Failed to apply for club')),
-                    );
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Title: $title',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  Text('Description: $description'),
+                  Spacer(),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        // Handle Apply button press
+                        try {
+                          final response =
+                              await ClubsService().applyForClub(id);
+                          if (response['error'] != null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(response['error'])),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content:
+                                      Text('Applied for club successfully')),
+                            );
+                          }
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content:
+                                    Text('Failed to apply for club')),
+                          );
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child: const Text(
+                        'Apply',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
                   ),
-                ),
-                child: const Text(
-                  'Apply',
-                  style: TextStyle(color: Colors.white),
-                ),
+                ],
               ),
             ),
           ),

@@ -18,4 +18,9 @@ class SearchProvider with ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
+
+  void clearResults() {
+    _searchResults = [];
+    notifyListeners();
+  }
 }

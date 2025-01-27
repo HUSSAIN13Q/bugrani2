@@ -16,7 +16,7 @@ class HeaderSection extends StatelessWidget {
       children: [
         Container(
           width: double.infinity,
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(20),
@@ -24,14 +24,14 @@ class HeaderSection extends StatelessWidget {
               BoxShadow(
                 color: Colors.black.withOpacity(0.2),
                 blurRadius: 50,
-                offset: Offset(0, 4),
+                offset: const Offset(0, 4),
               ),
             ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 'Meshari alhouli',
                 style: TextStyle(
                   fontSize: 20,
@@ -39,80 +39,51 @@ class HeaderSection extends StatelessWidget {
                   color: Colors.black,
                 ),
               ),
-              SizedBox(height: 4),
-              Text(
+              const SizedBox(height: 4),
+              const Text(
                 'UI Design / IT Department',
                 style: TextStyle(fontSize: 14, color: Colors.black54),
               ),
-              SizedBox(height: 16),
-              Text(
+              const SizedBox(height: 16),
+              const Text(
                 'Total work this month',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  WorkStats(title: 'Working day', value: '30', unit: 'Days'),
-                  VerticalDivider(color: Colors.grey),
-                  WorkStats(
+                  const WorkStats(
+                      title: 'Working day', value: '30', unit: 'Days'),
+                  const VerticalDivider(color: Colors.grey),
+                  const WorkStats(
                     title: 'Late',
                     value: '0',
                     unit: 'Minutes',
                     valueColor: Colors.orange,
                   ),
-                  VerticalDivider(color: Colors.grey),
-                  WorkStats(title: 'Work Hours', value: '', unit: 'Hours'),
+                  const VerticalDivider(color: Colors.grey),
+                  WorkStats(
+                      title: 'Work Hours',
+                      value: attendanceProvider.workHours.toStringAsFixed(2),
+                      unit: 'Hours'),
                 ],
               ),
+              const SizedBox(height: 8),
             ],
           ),
         ),
         if (isExpanded) ...[
-          SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: attendanceProvider.isLoading
-                  ? null
-                  : () {
-                      _showCheckInOutDialog(context, attendanceProvider);
-                    },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
-                padding: EdgeInsets.symmetric(vertical: 20),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.ads_click_outlined, color: Colors.white),
-                  SizedBox(width: 8),
-                  Text(
-                    attendanceProvider.isCheckedIn
-                        ? 'Click to Check Out'
-                        : 'Click to Check In',
-                    style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Expanded(
                 child: Container(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
@@ -120,24 +91,30 @@ class HeaderSection extends StatelessWidget {
                       BoxShadow(
                         color: Colors.black.withOpacity(0.2),
                         blurRadius: 50,
-                        offset: Offset(0, 4),
+                        offset: const Offset(0, 4),
                       ),
                     ],
                   ),
                   child: CheckButton(
                     title: 'Check In',
-                    status: attendanceProvider.isCheckedIn
+                    status: attendanceProvider.hasCheckedInToday
                         ? 'Checked In at ${_formatTime(attendanceProvider.checkInTime)}'
                         : 'Not Checked In',
                     icon: Icons.check_circle,
-                    onPressed: () {},
+                    onPressed: attendanceProvider.isLoading ||
+                            attendanceProvider.hasCheckedInToday
+                        ? null
+                        : () async {
+                            await _showCheckInOutDialog(
+                                context, attendanceProvider, true);
+                          },
                   ),
                 ),
               ),
-              SizedBox(width: 16),
+              const SizedBox(width: 16),
               Expanded(
                 child: Container(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
@@ -145,17 +122,23 @@ class HeaderSection extends StatelessWidget {
                       BoxShadow(
                         color: Colors.black.withOpacity(0.2),
                         blurRadius: 50,
-                        offset: Offset(0, 4),
+                        offset: const Offset(0, 4),
                       ),
                     ],
                   ),
                   child: CheckButton(
                     title: 'Check Out',
-                    status: attendanceProvider.isCheckedIn
-                        ? 'Not Checked Out'
-                        : 'Checked Out at ${_formatTime(attendanceProvider.checkOutTime)}',
+                    status: attendanceProvider.hasCheckedOutToday
+                        ? 'Checked Out at ${_formatTime(attendanceProvider.checkOutTime)}'
+                        : 'Not Checked Out',
                     icon: Icons.logout,
-                    onPressed: () {},
+                    onPressed: attendanceProvider.isLoading ||
+                            !attendanceProvider.isCheckedIn
+                        ? null
+                        : () async {
+                            await _showCheckInOutDialog(
+                                context, attendanceProvider, false);
+                          },
                   ),
                 ),
               ),
@@ -178,12 +161,18 @@ class HeaderSection extends StatelessWidget {
     }
   }
 
-  void _showCheckInOutDialog(
-      BuildContext context, AttendanceProvider attendanceProvider) {
+  Future<void> _showCheckInOutDialog(
+    BuildContext context,
+    AttendanceProvider attendanceProvider,
+    bool isCheckIn,
+  ) async {
+    String action = isCheckIn ? 'Check In' : 'Check Out';
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return Dialog(
+          backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
@@ -193,52 +182,97 @@ class HeaderSection extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  attendanceProvider.isCheckedIn ? 'Check Out' : 'Check In',
-                  style: TextStyle(
+                  action,
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: attendanceProvider.isLoading
-                      ? null
-                      : () async {
-                          try {
-                            if (attendanceProvider.isCheckedIn) {
-                              await attendanceProvider.checkOut(
-                                  25.276987, 55.296249);
-                            } else {
-                              await attendanceProvider.checkIn(
-                                  25.276987, 55.296249);
+                const SizedBox(height: 16),
+                Image.asset(
+                  'images/newsmap.png',
+                  width: double.infinity, // Extend to dialog border
+                  fit: BoxFit.cover,
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity, // Make button width like dialog width
+                  child: ElevatedButton(
+                    onPressed: attendanceProvider.isLoading
+                        ? null
+                        : () async {
+                            try {
+                              if (isCheckIn) {
+                                await attendanceProvider.checkIn(
+                                    25.276987, 55.296249);
+                                Navigator.pop(context);
+                                _showSuccessDialog(
+                                    context, 'Check-In Successful');
+                              } else {
+                                await attendanceProvider.checkOut(
+                                    25.276987, 55.296249);
+                                Navigator.pop(context);
+                                _showSuccessDialog(
+                                    context, 'Check-Out Successful');
+                              }
+                            } catch (error) {
+                              Navigator.pop(context);
+                              _showErrorDialog(context, error.toString());
                             }
-                            Navigator.pop(context);
-                          } catch (error) {
-                            Navigator.pop(context);
-                            _showErrorDialog(context, error.toString());
-                          }
-                        },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
+                          },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      padding: EdgeInsets.symmetric(vertical: 20), // Increased padding
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                     ),
-                  ),
-                  child: attendanceProvider.isLoading
-                      ? CircularProgressIndicator(color: Colors.white)
-                      : Text(
-                          attendanceProvider.isCheckedIn
-                              ? 'Check Out'
-                              : 'Check In',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
+                    child: attendanceProvider.isLoading
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : Text(
+                            action,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18, // Increased font size
+                            ),
                           ),
-                        ),
+                  ),
                 ),
               ],
             ),
           ),
+        );
+      },
+    );
+  }
+
+  void _showSuccessDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          title: Text(
+            'Success',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.blue,
+            ),
+          ),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text(
+                'OK',
+                style: TextStyle(color: Colors.orange),
+              ),
+            ),
+          ],
         );
       },
     );
@@ -249,14 +283,14 @@ class HeaderSection extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Error'),
+          title: const Text('Error'),
           content: Text(message),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         );
@@ -269,14 +303,14 @@ class CheckButton extends StatelessWidget {
   final String title;
   final String status;
   final IconData icon;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   const CheckButton({
     Key? key,
     required this.title,
     required this.status,
     required this.icon,
-    required this.onPressed,
+    this.onPressed,
   }) : super(key: key);
 
   @override
@@ -285,16 +319,20 @@ class CheckButton extends StatelessWidget {
       onTap: onPressed,
       child: Column(
         children: [
-          Icon(icon, size: 40, color: Colors.orange),
-          SizedBox(height: 8),
+          Icon(
+            icon,
+            size: 50, // Increased icon size
+            color: onPressed == null ? Colors.grey : Colors.orange,
+          ),
+          const SizedBox(height: 8),
           Text(
             title,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold), // Increased font size
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(
             status,
-            style: TextStyle(fontSize: 14, color: Colors.black54),
+            style: const TextStyle(fontSize: 16, color: Colors.black54), // Increased font size
           ),
         ],
       ),
@@ -322,9 +360,9 @@ class WorkStats extends StatelessWidget {
       children: [
         Text(
           title,
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        SizedBox(height: 4),
+        const SizedBox(height: 4),
         Text(
           value,
           style: TextStyle(
@@ -333,10 +371,10 @@ class WorkStats extends StatelessWidget {
             color: valueColor ?? Colors.black,
           ),
         ),
-        SizedBox(height: 4),
+        const SizedBox(height: 4),
         Text(
           unit,
-          style: TextStyle(fontSize: 14, color: Colors.black54),
+          style: const TextStyle(fontSize: 14, color: Colors.black54),
         ),
       ],
     );

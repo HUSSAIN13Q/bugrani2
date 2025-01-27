@@ -17,14 +17,23 @@ class _InboxPageState extends State<InboxPage> {
   void initState() {
     super.initState();
     _searchController = TextEditingController();
+    _searchController.addListener(_onSearchChanged);
     // Fetch myworkshops when the page is initialized
     Provider.of<MyWorkshopProvider>(context, listen: false).getMyWorkshop();
   }
 
   @override
   void dispose() {
+    _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
     super.dispose();
+  }
+
+  void _onSearchChanged() {
+    if (_searchController.text.isEmpty) {
+      Provider.of<SearchProvider>(context, listen: false).clearResults();
+      Provider.of<SearchProvider>(context, listen: false).notifyListeners();
+    }
   }
 
   @override

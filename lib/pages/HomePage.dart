@@ -232,7 +232,7 @@ class _HomePageState extends State<HomePage> {
               children: [
                 AnimatedContainer(
                   duration: Duration(milliseconds: 300),
-                  height: isExpanded ? 470 : 260,
+                  height: isExpanded ? 400 : 260,
                   decoration: BoxDecoration(
                     color: Color(0xFF2C80E6),
                     borderRadius: BorderRadius.only(
