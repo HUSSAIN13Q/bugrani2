@@ -1,41 +1,27 @@
+import 'package:bugrani2/providers/meetings_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
-class UpcomingMeetingsSection extends StatefulWidget {
-  @override
-  _UpcomingMeetingsSectionState createState() =>
-      _UpcomingMeetingsSectionState();
-}
-
-class _UpcomingMeetingsSectionState extends State<UpcomingMeetingsSection> {
-  final List<Map<String, String>> _meetings = [
-    {
-      'title': 'Design Team Meeting',
-      'date': '01/feb/2025',
-      'description': 'Lead by Reem Alhussaini on Burgan Lab',
-      'time': 'At 12:30 PM',
-    },
-    {
-      'title': 'Backend Planning Meeting',
-      'date': '01/feb/2025',
-      'description': 'Lead by Hussain Alsaffar on Burgan Lab',
-      'time': 'At 02:30 PM',
-    },
-  ];
-
-  void _addMeeting(Map<String, String> meeting) {
-    setState(() {
-      _meetings.add(meeting);
-    });
-  }
-
+class UpcomingMeetingsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final meetingProvider = Provider.of<MeetingProvider>(context);
+
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SizedBox(height: 16),
+          Text(
+            'Upcoming Meetings',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
           SizedBox(height: 16),
           Container(
             padding: EdgeInsets.all(16),
@@ -52,7 +38,7 @@ class _UpcomingMeetingsSectionState extends State<UpcomingMeetingsSection> {
             ),
             child: Column(
               children: [
-                ..._meetings.map((meeting) => Column(
+                ...meetingProvider.meetings.map((meeting) => Column(
                       children: [
                         MeetingItem(
                           title: meeting['title']!,
@@ -65,7 +51,15 @@ class _UpcomingMeetingsSectionState extends State<UpcomingMeetingsSection> {
                     )),
                 SizedBox(height: 16),
                 GestureDetector(
-                  onTap: () => _showGenerateMeetingDialog(context),
+                  onTap: () {
+                    debugPrint("Opening Generate Meeting Dialog");
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return GenerateMeetingDialog();
+                      },
+                    );
+                  },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -84,15 +78,6 @@ class _UpcomingMeetingsSectionState extends State<UpcomingMeetingsSection> {
           ),
         ],
       ),
-    );
-  }
-
-  void _showGenerateMeetingDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return GenerateMeetingDialog(onConfirm: _addMeeting);
-      },
     );
   }
 }
@@ -159,15 +144,15 @@ class MeetingItem extends StatelessWidget {
 }
 
 class GenerateMeetingDialog extends StatefulWidget {
-  final Function(Map<String, String>) onConfirm;
-
-  const GenerateMeetingDialog({required this.onConfirm});
-
   @override
   _GenerateMeetingDialogState createState() => _GenerateMeetingDialogState();
 }
 
 class _GenerateMeetingDialogState extends State<GenerateMeetingDialog> {
+  final _titleController = TextEditingController();
+  final _dateController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  final _timeController = TextEditingController();
   final _departmentController = TextEditingController();
   final _teamController = TextEditingController();
   final _locationController = TextEditingController();
@@ -258,13 +243,22 @@ class _GenerateMeetingDialogState extends State<GenerateMeetingDialog> {
         Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
         SizedBox(height: 8),
         DropdownButtonFormField<String>(
-          value: controller.text.isEmpty ? null : controller.text,
+          value: options.isEmpty
+              ? null
+              : (controller.text.isEmpty ? options.first : controller.text),
           items: options
               .map((e) => DropdownMenuItem(child: Text(e), value: e))
               .toList(),
           onChanged: (value) {
             setState(() {
               controller.text = value!;
+              if (label == 'Choose Department') {
+                _teamController.clear();
+                if (_departmentTeams.containsKey(value) &&
+                    _departmentTeams[value]!.isNotEmpty) {
+                  _teamController.text = _departmentTeams[value]!.first;
+                }
+              }
             });
           },
           decoration: InputDecoration(
@@ -311,13 +305,14 @@ class _GenerateMeetingDialogState extends State<GenerateMeetingDialog> {
         if (pickedTime != null) {
           setState(() {
             _selectedTime = pickedTime;
+            _timeController.text = _selectedTime!.format(context);
           });
         }
       },
-      child: _buildTextField(
-        'Choose Time',
-        TextEditingController(
-          text: _selectedTime?.format(context) ?? '',
+      child: AbsorbPointer(
+        child: _buildTextField(
+          'Choose Time',
+          _timeController,
         ),
       ),
     );
@@ -335,15 +330,14 @@ class _GenerateMeetingDialogState extends State<GenerateMeetingDialog> {
         if (pickedDate != null) {
           setState(() {
             _selectedDate = pickedDate;
+            _dateController.text = DateFormat('MMM dd, yyyy').format(_selectedDate!);
           });
         }
       },
-      child: _buildTextField(
-        'Choose Date',
-        TextEditingController(
-          text: _selectedDate != null
-              ? DateFormat('MMM dd, yyyy').format(_selectedDate!)
-              : '',
+      child: AbsorbPointer(
+        child: _buildTextField(
+          'Choose Date',
+          _dateController,
         ),
       ),
     );
@@ -353,19 +347,21 @@ class _GenerateMeetingDialogState extends State<GenerateMeetingDialog> {
     if (_departmentController.text.isEmpty ||
         _teamController.text.isEmpty ||
         _locationController.text.isEmpty ||
-        _selectedTime == null ||
-        _selectedDate == null) {
+        _timeController.text.isEmpty ||
+        _dateController.text.isEmpty) {
+      debugPrint("Missing input fields. Cannot add meeting.");
       return;
     }
 
     final meeting = {
       'title': '${_teamController.text} Meeting',
-      'date': DateFormat('MMM dd, yyyy').format(_selectedDate!),
-      'description': 'Lead by Meshari Alhouli at ${_locationController.text}',
-      'time': 'At ${_selectedTime!.format(context)}',
+      'date': _dateController.text,
+      'description': 'Lead by ${_departmentController.text} at ${_locationController.text}',
+      'time': _timeController.text,
     };
 
-    widget.onConfirm(meeting);
+    debugPrint("Adding Meeting: $meeting");
+    Provider.of<MeetingProvider>(context, listen: false).addMeeting(meeting);
     Navigator.pop(context);
   }
 }

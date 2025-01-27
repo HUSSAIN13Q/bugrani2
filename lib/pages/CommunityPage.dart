@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:bugrani2/pages/clubsInfo_page.dart';
 import 'package:bugrani2/models/club.dart';
+import 'package:intl/intl.dart';
 
 class CommunityPage extends StatefulWidget {
   @override
@@ -51,7 +52,7 @@ class _CommunityPageState extends State<CommunityPage> {
                   child: Text(
                     'Clubs',
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 22, // Increased font size
                       fontWeight: FontWeight.bold,
                       color: isClubsSelected ? Colors.orange : Colors.black,
                     ),
@@ -60,7 +61,7 @@ class _CommunityPageState extends State<CommunityPage> {
                 // Divider
                 Text(
                   '     |',
-                  style: TextStyle(fontSize: 18, color: Colors.grey),
+                  style: TextStyle(fontSize: 22, color: Colors.grey), // Increased font size
                 ),
                 // Workshops Button
                 GestureDetector(
@@ -72,7 +73,7 @@ class _CommunityPageState extends State<CommunityPage> {
                   child: Text(
                     'Workshops',
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 22, // Increased font size
                       fontWeight: FontWeight.bold,
                       color: !isClubsSelected ? Colors.orange : Colors.black,
                     ),
@@ -244,12 +245,123 @@ class WorkshopsCard extends StatelessWidget {
     }
   }
 
+  String _formatDate(String date) {
+    try {
+      final parsedDate = DateTime.parse(date);
+      return DateFormat('yyyy-MM-dd').format(parsedDate);
+    } catch (e) {
+      return date;
+    }
+  }
+
+  void _showWorkshopDialog(BuildContext context) {
+    final imagePath = _getImageByTitle(title);
+    final formattedDate = _formatDate(date);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Container(
+            height: 500, // Increased height
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Icon(Icons.close, color: Colors.black),
+                    ),
+                  ),
+                  if (imagePath.isNotEmpty)
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Image.asset(
+                        imagePath,
+                        width: double.infinity,
+                        height: 180,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  const SizedBox(height: 16),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 20, // Decreased font size
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text('Date: $formattedDate'),
+                  const SizedBox(height: 8),
+                  Text(description),
+                  const Spacer(),
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        // Handle Apply button press
+                        try {
+                          final response =
+                              await WorkshopService().applyForWorkshop(id);
+                          if (response['error'] != null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(response['error'])),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content:
+                                      Text('Applied for workshop successfully')),
+                            );
+                          }
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Failed to apply for workshop')),
+                          );
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange,
+                        padding: EdgeInsets.symmetric(
+                          vertical: 20,
+                          horizontal: 40,
+                        ), // Increased button size
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child: const Text(
+                        'Apply',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold, // Bold font
+                          fontSize: 18, // Increased font size
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final imagePath = _getImageByTitle(title);
 
     return Container(
-      height: 180,
+      height: 160, // Decreased height
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -272,8 +384,8 @@ class WorkshopsCard extends StatelessWidget {
               ),
               child: Image.asset(
                 imagePath,
-                width: 180, // Increased width
-                height: 180,
+                width: 160, // Decreased width
+                height: 160,
                 fit: BoxFit.cover,
               ),
             ),
@@ -283,49 +395,34 @@ class WorkshopsCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Title: $title',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 8),
-                  Text('Date: $date'),
-                  const SizedBox(height: 8),
-                  Text('Description: $description'),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 20, // Decreased font size
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   Spacer(),
                   Align(
                     alignment: Alignment.bottomRight,
                     child: ElevatedButton(
-                      onPressed: () async {
-                        // Handle Apply button press
-                        try {
-                          final response =
-                              await WorkshopService().applyForWorkshop(id);
-                          if (response['error'] != null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(response['error'])),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                  content:
-                                      Text('Applied for workshop successfully')),
-                            );
-                          }
-                        } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content:
-                                    Text('Failed to apply for workshop')),
-                          );
-                        }
-                      },
+                      onPressed: () => _showWorkshopDialog(context),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.orange,
+                        padding: EdgeInsets.symmetric(
+                          vertical: 12,
+                          horizontal: 24,
+                        ), // Increased button size
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
                       ),
                       child: const Text(
-                        'Apply',
-                        style: TextStyle(color: Colors.white),
+                        'Learn more',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold, // Bold font
+                        ),
                       ),
                     ),
                   ),
@@ -368,12 +465,109 @@ class ClubsCard extends StatelessWidget {
     }
   }
 
+  void _showClubDialog(BuildContext context) {
+    final imagePath = _getImageByTitle(title);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Container(
+            height: 500, // Increased height
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Icon(Icons.close, color: Colors.black),
+                    ),
+                  ),
+                  if (imagePath.isNotEmpty)
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Image.asset(
+                        imagePath,
+                        width: double.infinity,
+                        height: 180,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  const SizedBox(height: 16),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 20, // Decreased font size
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(description),
+                  const Spacer(),
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        // Handle Apply button press
+                        try {
+                          final response = await ClubsService().applyForClub(id);
+                          if (response['error'] != null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(response['error'])),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content: Text('Applied for club successfully')),
+                            );
+                          }
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Failed to apply for club')),
+                          );
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange,
+                        padding: EdgeInsets.symmetric(
+                          vertical: 15,
+                          horizontal: 30,
+                        ), // Increased button size
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child: const Text(
+                        'Apply',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold, // Bold font
+                          fontSize: 16, // Increased font size
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final imagePath = _getImageByTitle(title);
 
     return Container(
-      height: 180,
+      height: 160, // Decreased height
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -396,8 +590,8 @@ class ClubsCard extends StatelessWidget {
               ),
               child: Image.asset(
                 imagePath,
-                width: 180, // Increased width
-                height: 180,
+                width: 160, // Decreased width
+                height: 160,
                 fit: BoxFit.cover,
               ),
             ),
@@ -407,47 +601,34 @@ class ClubsCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Title: $title',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 8),
-                  Text('Description: $description'),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 20, // Decreased font size
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   Spacer(),
                   Align(
                     alignment: Alignment.bottomRight,
                     child: ElevatedButton(
-                      onPressed: () async {
-                        // Handle Apply button press
-                        try {
-                          final response =
-                              await ClubsService().applyForClub(id);
-                          if (response['error'] != null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(response['error'])),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                  content:
-                                      Text('Applied for club successfully')),
-                            );
-                          }
-                        } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content:
-                                    Text('Failed to apply for club')),
-                          );
-                        }
-                      },
+                      onPressed: () => _showClubDialog(context),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.orange,
+                        padding: EdgeInsets.symmetric(
+                          vertical: 12,
+                          horizontal: 24,
+                        ), // Increased button size
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
                       ),
                       child: const Text(
-                        'Apply',
-                        style: TextStyle(color: Colors.white),
+                        'Learn more',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold, // Bold font
+                        ),
                       ),
                     ),
                   ),
