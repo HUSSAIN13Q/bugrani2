@@ -32,43 +32,7 @@ class _CommunityPageState extends State<CommunityPage> {
       body: Column(
         children: [
           // Blue AppBar with Title and Logo , design the base of the page
-          Stack(
-            children: [
-              Container(
-                height: 150, // Reduced the height of the blue container
-                decoration: const BoxDecoration(
-                  color: Color(0xFF2C80E6),
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(40),
-                    bottomRight: Radius.circular(40),
-                  ),
-                ),
-              ),
-              Positioned(
-                top: 40, // Moved up
-                left: MediaQuery.of(context).size.width / 2 - 25,
-                child: Image.asset(
-                  'assets/images/orangelogoonly.png',
-                  height: 50,
-                ),
-              ),
-              const Positioned(
-                top: 110,
-                left: 0,
-                right: 0,
-                child: Center(
-                  child: Text(
-                    "Community",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+          _buildAppBar(context, "Community"),
           const SizedBox(height: 16),
           // Tabs for Clubs and Workshops
           // Tabs for Clubs and Workshops  i mean  the orange buttons to select the section
@@ -126,6 +90,46 @@ class _CommunityPageState extends State<CommunityPage> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildAppBar(BuildContext context, String title) {
+    return Stack(
+      children: [
+        Container(
+          height: 150, // Reduced the height of the blue container
+          decoration: const BoxDecoration(
+            color: Color(0xFF2C80E6),
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(40),
+              bottomRight: Radius.circular(40),
+            ),
+          ),
+        ),
+        Positioned(
+          top: 40, // Moved up
+          left: MediaQuery.of(context).size.width / 2 - 25,
+          child: Image.asset(
+            'assets/images/orangelogoonly.png',
+            height: 50,
+          ),
+        ),
+        Positioned(
+          top: 110,
+          left: 0,
+          right: 0,
+          child: Center(
+            child: Text(
+              title,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -190,7 +190,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    void initState() {}
     final List<Widget> _pages = [
       HomePageContent(
         customWidgets: customWidgets,
@@ -294,7 +293,7 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                 )
-              : Expanded(child: _pages[_currentIndex]),
+              : SizedBox(),
           if (_currentIndex == 0)
             Stack(
               children: [

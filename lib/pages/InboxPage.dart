@@ -25,43 +25,7 @@ class _InboxPageState extends State<InboxPage> {
       body: Column(
         children: [
           // Blue AppBar with Title and Logo , design the base of the page
-          Stack(
-            children: [
-              Container(
-                height: 150, // Reduced the height of the blue container
-                decoration: const BoxDecoration(
-                  color: Color(0xFF2C80E6),
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(50),
-                    bottomRight: Radius.circular(50),
-                  ),
-                ),
-              ),
-              Positioned(
-                top: 40, // Moved up
-                left: MediaQuery.of(context).size.width / 2 - 25,
-                child: Image.asset(
-                  'assets/images/orangelogoonly.png',
-                  height: 50,
-                ),
-              ),
-              const Positioned(
-                top: 110,
-                left: 0,
-                right: 0,
-                child: Center(
-                  child: Text(
-                    "Inbox",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+          _buildAppBar(context, "Inbox"),
           const SizedBox(height: 16),
           // Title for My Certificates with Icon
           const Padding(
@@ -90,6 +54,46 @@ class _InboxPageState extends State<InboxPage> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildAppBar(BuildContext context, String title) {
+    return Stack(
+      children: [
+        Container(
+          height: 150, // Reduced the height of the blue container
+          decoration: const BoxDecoration(
+            color: Color(0xFF2C80E6),
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(50),
+              bottomRight: Radius.circular(50),
+            ),
+          ),
+        ),
+        Positioned(
+          top: 40, // Moved up
+          left: MediaQuery.of(context).size.width / 2 - 25,
+          child: Image.asset(
+            'assets/images/orangelogoonly.png',
+            height: 50,
+          ),
+        ),
+        Positioned(
+          top: 110,
+          left: 0,
+          right: 0,
+          child: Center(
+            child: Text(
+              title,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

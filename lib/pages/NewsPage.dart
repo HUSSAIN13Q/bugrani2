@@ -10,44 +10,7 @@ class NewsPage extends StatelessWidget {
       body: Column(
         children: [
           // Blue AppBar with Title and Logo
-          Stack(
-            children: [
-              Container(
-                height: 150,
-                decoration: BoxDecoration(
-                  color: Color(0xFF2C80E6),
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(40),
-                    bottomRight: Radius.circular(40),
-                  ),
-                ),
-              ),
-              Positioned(
-                top: 40, // Moved up
-                left: MediaQuery.of(context).size.width / 2 - 25,
-                child: Image.asset(
-                  'assets/images/orangelogoonly.png', // Replace with your logo path
-                  height: 50,
-                ),
-              ),
-              Positioned(
-                top: 110,
-                left: 0,
-                right: 0,
-                child: Center(
-                  child: Text(
-                    "News",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-
+          _buildAppBar(context, "News"),
           // News Content
           Expanded(
             child: ListView.builder(
@@ -64,6 +27,46 @@ class NewsPage extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildAppBar(BuildContext context, String title) {
+    return Stack(
+      children: [
+        Container(
+          height: 150,
+          decoration: BoxDecoration(
+            color: Color(0xFF2C80E6),
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(40),
+              bottomRight: Radius.circular(40),
+            ),
+          ),
+        ),
+        Positioned(
+          top: 40, // Moved up
+          left: MediaQuery.of(context).size.width / 2 - 25,
+          child: Image.asset(
+            'assets/images/orangelogoonly.png', // Replace with your logo path
+            height: 50,
+          ),
+        ),
+        Positioned(
+          top: 110,
+          left: 0,
+          right: 0,
+          child: Center(
+            child: Text(
+              title,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
