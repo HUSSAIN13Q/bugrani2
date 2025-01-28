@@ -14,14 +14,7 @@ class UpcomingMeetingsSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(height: 16),
-          Text(
-            'Upcoming Meetings',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-          ),
+         
           SizedBox(height: 16),
           Container(
             padding: EdgeInsets.all(16),
