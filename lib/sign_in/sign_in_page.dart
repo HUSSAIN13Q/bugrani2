@@ -123,22 +123,6 @@ class SignInPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   const SizedBox(height: 10),
-                  // Center(
-                  //   child: GestureDetector(
-                  //     onTap: () {
-                  //       context.push('/forget_pass');
-                  //     },
-                  //     child: const Text(
-                  //       'Forgot pin?',
-                  //       style: TextStyle(
-                  //         color: Colors.white,
-                  //         fontSize: 15,
-                  //         fontFamily: 'Inter',
-                  //         fontWeight: FontWeight.bold,
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
                   const SizedBox(height: 30), // Add space above the button
                   Center(
                     child: SizedBox(

@@ -1,6 +1,5 @@
 import 'package:bugrani2/pages/CommunityPage.dart';
 import 'package:bugrani2/pages/HomePage.dart';
-// import 'package:bugrani2/pages/home_page.dart';
 import 'package:bugrani2/providers/clubs_provider.dart';
 import 'package:bugrani2/providers/inbox_provider.dart';
 import 'package:bugrani2/providers/leaves_provider.dart';
@@ -47,11 +46,6 @@ final GoRouter _router = GoRouter(
       path: '/home',
       builder: (context, state) => HomePage(), // Route to HomePage
     ),
-    // GoRoute(
-    //   path: '/leaves_page',
-    //   builder: (context, state) => LeavesPage(), // Route to LeavesPage
-    // ),
-    // Add other routes here as needed
   ],
 );
 
