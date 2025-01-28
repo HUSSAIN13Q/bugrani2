@@ -30,9 +30,11 @@ class _InboxPageState extends State<InboxPage> {
   }
 
   void _onSearchChanged() {
+    final searchProvider = Provider.of<SearchProvider>(context, listen: false);
     if (_searchController.text.isEmpty) {
-      Provider.of<SearchProvider>(context, listen: false).clearResults();
-      Provider.of<SearchProvider>(context, listen: false).notifyListeners();
+      searchProvider.clearResults();
+    } else {
+      searchProvider.searchEmployees(_searchController.text);
     }
   }
 
@@ -87,7 +89,8 @@ class _InboxPageState extends State<InboxPage> {
                   hintText: 'Search employees...',
                   prefixIcon: Icon(Icons.search),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0), // Rounded corners
+                    borderRadius:
+                        BorderRadius.circular(30.0), // Rounded corners
                     borderSide: BorderSide.none,
                   ),
                   filled: true,
@@ -123,7 +126,8 @@ class _InboxPageState extends State<InboxPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(employee['email']),
-                          Text(employee['title']), // Display the title from the database
+                          Text(employee[
+                              'title']), // Display the title from the database
                         ],
                       ),
                     );
@@ -232,7 +236,8 @@ class MyWorkshopsSection extends StatelessWidget {
               children: [
                 MyWorkshopsCard(
                   title: myworkshop.title,
-                  date: DateFormat('yyyy-MM-dd').format(DateTime.parse(myworkshop.date)),
+                  date: DateFormat('yyyy-MM-dd')
+                      .format(DateTime.parse(myworkshop.date)),
                   description: myworkshop.description,
                 ),
                 const SizedBox(height: 16),

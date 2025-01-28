@@ -1,18 +1,19 @@
 import 'package:bugrani2/models/leave.dart';
 import 'package:bugrani2/sign_in/auth_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:bugrani2/providers/leaves_provider.dart';
 import 'package:file_picker/file_picker.dart';
-
 
 class LeavesPage extends StatefulWidget {
   @override
   _LeavesPageState createState() => _LeavesPageState();
 }
 
-class _LeavesPageState extends State<LeavesPage> with SingleTickerProviderStateMixin {
+class _LeavesPageState extends State<LeavesPage>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -111,7 +112,7 @@ class _LeavesPageState extends State<LeavesPage> with SingleTickerProviderStateM
                         children: [
                           _leaveStatCard(
                             context,
-                            "Sick Leave",
+                            "Sick",
                             leavesProvider.leaveBalance!.sickUsed.toString(),
                             (leavesProvider.leaveBalance!.sickEntitlement -
                                     leavesProvider.leaveBalance!.sickUsed)
@@ -119,7 +120,7 @@ class _LeavesPageState extends State<LeavesPage> with SingleTickerProviderStateM
                           ),
                           _leaveStatCard(
                             context,
-                            "Annual Leave",
+                            "Annual",
                             leavesProvider.leaveBalance!.annualUsed.toString(),
                             (leavesProvider.leaveBalance!.annualEntitlement -
                                     leavesProvider.leaveBalance!.annualUsed)
@@ -170,7 +171,8 @@ class _LeavesPageState extends State<LeavesPage> with SingleTickerProviderStateM
                         Tab(text: "Rejected"),
                       ],
                       labelColor: Colors.blue, // Color for selected tab
-                      unselectedLabelColor: Colors.black, // Color for unselected tabs
+                      unselectedLabelColor:
+                          Colors.black, // Color for unselected tabs
                       indicatorColor: Colors.blue, // Color for the underline
                       indicatorWeight: 3.0, // Thickness of the underline
                     ),
@@ -186,16 +188,26 @@ class _LeavesPageState extends State<LeavesPage> with SingleTickerProviderStateM
                               return Center(
                                 child: Text(
                                   "No leave data available",
-                                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.grey),
                                 ),
                               );
                             } else {
                               return TabBarView(
                                 controller: _tabController,
                                 children: [
-                                  _buildLeaveList(leavesProvider.leaves.where((leave) => leave.status == 'Pending').toList()),
-                                  _buildLeaveList(leavesProvider.leaves.where((leave) => leave.status == 'Approved').toList()),
-                                  _buildLeaveList(leavesProvider.leaves.where((leave) => leave.status == 'Rejected').toList()),
+                                  _buildLeaveList(leavesProvider.leaves
+                                      .where(
+                                          (leave) => leave.status == 'Pending')
+                                      .toList()),
+                                  _buildLeaveList(leavesProvider.leaves
+                                      .where(
+                                          (leave) => leave.status == 'Approved')
+                                      .toList()),
+                                  _buildLeaveList(leavesProvider.leaves
+                                      .where(
+                                          (leave) => leave.status == 'Rejected')
+                                      .toList()),
                                 ],
                               );
                             }
@@ -229,7 +241,8 @@ class _LeavesPageState extends State<LeavesPage> with SingleTickerProviderStateM
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("${leave.startDate} to ${leave.endDate}\n${leave.description}"),
+                  Text(
+                      "${leave.startDate} to ${leave.endDate}\n${leave.description}"),
                   SizedBox(height: 4),
                   Row(
                     children: [
@@ -238,7 +251,8 @@ class _LeavesPageState extends State<LeavesPage> with SingleTickerProviderStateM
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
                           color: leave.status == 'Pending'
                               ? Colors.grey
@@ -269,7 +283,9 @@ class _LeavesPageState extends State<LeavesPage> with SingleTickerProviderStateM
               ),
               isThreeLine: true,
             ),
-            Divider(color: const Color.fromARGB(255, 0, 0, 0), thickness: 0.1), // Thin blue line
+            Divider(
+                color: const Color.fromARGB(255, 0, 0, 0),
+                thickness: 0.1), // Thin blue line
           ],
         );
       },
@@ -348,14 +364,14 @@ class _LeaveFormPageState extends State<LeaveFormPage> {
   String selectedLeaveType = 'Choose Your Leave Type';
   final List<String> leaveTypes = [
     'Choose Your Leave Type',
-    'Sick Leave',
-    'Annual Leave', 
-    'Birthday Leave',
-    'Busnisstrip Leave', 
-    'Compensation Leave',
-    'Death Type A&B Leave',
-    'Hajj Leave',
-    'Marriage Leave',
+    'Sick',
+    'Annual',
+    'Birthday',
+    'Busnisstrip',
+    'Compensation',
+    'Death Type A&B',
+    'Hajj',
+    'Marriage',
   ];
 
   final TextEditingController startDateController = TextEditingController();
@@ -367,7 +383,7 @@ class _LeaveFormPageState extends State<LeaveFormPage> {
   @override
   void initState() {
     super.initState();
-    if (selectedLeaveType == 'Annual Leave') {
+    if (selectedLeaveType == 'Annual') {
       _fetchRecommendations();
     }
   }
@@ -379,6 +395,10 @@ class _LeaveFormPageState extends State<LeaveFormPage> {
     setState(() {
       isLoading = false;
     });
+    leavesProvider.recommendations =
+        leavesProvider.recommendations.map((recommendation) {
+      return recommendation.replaceAll('- -', '').trim();
+    }).toList();
   }
 
   Future<void> _pickDocument() async {
@@ -453,12 +473,14 @@ class _LeaveFormPageState extends State<LeaveFormPage> {
                         iconSize: 24,
                         elevation: 16,
                         dropdownColor: Colors.white,
-                        style:
-                            const TextStyle(color: Colors.black, fontSize: 18),
+                        style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 22,
+                            fontFamily: 'Inter'),
                         onChanged: (String? newValue) {
                           setState(() {
                             selectedLeaveType = newValue!;
-                            if (selectedLeaveType == 'Annual Leave') {
+                            if (selectedLeaveType == 'Annual') {
                               _fetchRecommendations();
                             }
                           });
@@ -470,7 +492,8 @@ class _LeaveFormPageState extends State<LeaveFormPage> {
                             child: Text(value),
                           );
                         }).toList(),
-                        borderRadius: BorderRadius.circular(20.0), // More rounded
+                        borderRadius:
+                            BorderRadius.circular(20.0), // More rounded
                       ),
                     ),
                   ),
@@ -549,7 +572,7 @@ class _LeaveFormPageState extends State<LeaveFormPage> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  if (selectedLeaveType != 'Annual Leave')
+                  if (selectedLeaveType != 'Annual')
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -580,7 +603,7 @@ class _LeaveFormPageState extends State<LeaveFormPage> {
                       ],
                     ),
                   const SizedBox(height: 16),
-                  if (selectedLeaveType == 'Annual Leave')
+                  if (selectedLeaveType == 'Annual')
                     isLoading
                         ? Expanded(
                             child: Center(
@@ -588,10 +611,12 @@ class _LeaveFormPageState extends State<LeaveFormPage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.orange),
                                   ),
                                   SizedBox(height: 16),
-                                  Icon(Icons.android, size: 50, color: Colors.black),
+                                  Icon(Icons.android,
+                                      size: 50, color: Colors.black),
                                   SizedBox(height: 16),
                                   Text(
                                     'AI Recommendation',
@@ -616,7 +641,9 @@ class _LeaveFormPageState extends State<LeaveFormPage> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  SizedBox(height: 8), // Add space between text and container
+                                  SizedBox(
+                                      height:
+                                          8), // Add space between text and container
                                   Container(
                                     decoration: BoxDecoration(
                                       color: Colors.white,
@@ -633,10 +660,13 @@ class _LeaveFormPageState extends State<LeaveFormPage> {
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: leavesProvider.recommendations.map((recommendation) {
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: leavesProvider.recommendations
+                                            .map((recommendation) {
                                           return Padding(
-                                            padding: const EdgeInsets.symmetric(vertical: 4.0),
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 4.0),
                                             child: Text(
                                               recommendation,
                                               style: TextStyle(
@@ -673,6 +703,10 @@ class _LeaveFormPageState extends State<LeaveFormPage> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                         content: Text('Leave request submitted successfully')),
+                  );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LeavesPage()),
                   );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(

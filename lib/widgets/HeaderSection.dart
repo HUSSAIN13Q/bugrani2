@@ -178,65 +178,81 @@ class HeaderSection extends StatelessWidget {
           ),
           child: Padding(
             padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+            child: Stack(
               children: [
-                Text(
-                  action,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Image.asset(
-                  'images/newsmap.png',
-                  width: double.infinity, // Extend to dialog border
-                  fit: BoxFit.cover,
-                ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity, // Make button width like dialog width
-                  child: ElevatedButton(
-                    onPressed: attendanceProvider.isLoading
-                        ? null
-                        : () async {
-                            try {
-                              if (isCheckIn) {
-                                await attendanceProvider.checkIn(
-                                    25.276987, 55.296249);
-                                Navigator.pop(context);
-                                _showSuccessDialog(
-                                    context, 'Check-In Successful');
-                              } else {
-                                await attendanceProvider.checkOut(
-                                    25.276987, 55.296249);
-                                Navigator.pop(context);
-                                _showSuccessDialog(
-                                    context, 'Check-Out Successful');
-                              }
-                            } catch (error) {
-                              Navigator.pop(context);
-                              _showErrorDialog(context, error.toString());
-                            }
-                          },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange,
-                      padding: EdgeInsets.symmetric(vertical: 20), // Increased padding
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      action,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    child: attendanceProvider.isLoading
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : Text(
-                            action,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18, // Increased font size
-                            ),
+                    const SizedBox(height: 16),
+                    Image.asset(
+                      'images/newsmap.png',
+                      width: double.infinity, // Extend to dialog border
+                      fit: BoxFit.cover,
+                    ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: double
+                          .infinity, // Make button width like dialog width
+                      child: ElevatedButton(
+                        onPressed: attendanceProvider.isLoading
+                            ? null
+                            : () async {
+                                try {
+                                  if (isCheckIn) {
+                                    await attendanceProvider.checkIn(
+                                        25.276987, 55.296249);
+                                    Navigator.pop(context);
+                                    _showSuccessDialog(
+                                        context, 'Check-In Successful');
+                                  } else {
+                                    await attendanceProvider.checkOut(
+                                        25.276987, 55.296249);
+                                    Navigator.pop(context);
+                                    _showSuccessDialog(
+                                        context, 'Check-Out Successful');
+                                  }
+                                } catch (error) {
+                                  Navigator.pop(context);
+                                  _showErrorDialog(context, error.toString());
+                                }
+                              },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.orange,
+                          padding: EdgeInsets.symmetric(
+                              vertical: 20), // Increased padding
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
                           ),
+                        ),
+                        child: attendanceProvider.isLoading
+                            ? const CircularProgressIndicator(
+                                color: Colors.white)
+                            : Text(
+                                action,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18, // Increased font size
+                                ),
+                              ),
+                      ),
+                    ),
+                  ],
+                ),
+                Align(
+                  alignment: Alignment.topRight,
+                  child: IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
                   ),
                 ),
               ],
@@ -327,12 +343,15 @@ class CheckButton extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             title,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold), // Increased font size
+            style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold), // Increased font size
           ),
           const SizedBox(height: 4),
           Text(
             status,
-            style: const TextStyle(fontSize: 16, color: Colors.black54), // Increased font size
+            style: const TextStyle(
+                fontSize: 16, color: Colors.black54), // Increased font size
           ),
         ],
       ),

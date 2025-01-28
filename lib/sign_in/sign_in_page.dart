@@ -70,7 +70,7 @@ class SignInPage extends StatelessWidget {
                 children: [
                   const SizedBox(height: 20), // Add space above the username
                   const Text(
-                    'Username',
+                    'Enter Your Email',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -83,7 +83,7 @@ class SignInPage extends StatelessWidget {
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: const Color(0xFFF7F7F7),
-                      hintText: 'Username',
+                      hintText: 'Email',
                       hintStyle: const TextStyle(
                         color: Color(0xFF9D9D9D),
                         fontSize: 20,
@@ -96,7 +96,7 @@ class SignInPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   const Text(
-                    'Enter Your PIN',
+                    'Enter Your Password',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -110,7 +110,7 @@ class SignInPage extends StatelessWidget {
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: const Color(0xFFF7F7F7),
-                      hintText: '4-Digit Pin',
+                      hintText: 'Password',
                       hintStyle: const TextStyle(
                         color: Color(0xFF949494),
                         fontSize: 20,
@@ -123,22 +123,22 @@ class SignInPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   const SizedBox(height: 10),
-                  Center(
-                    child: GestureDetector(
-                      onTap: () {
-                        context.push('/forget_pass');
-                      },
-                      child: const Text(
-                        'Forgot pin?',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
+                  // Center(
+                  //   child: GestureDetector(
+                  //     onTap: () {
+                  //       context.push('/forget_pass');
+                  //     },
+                  //     child: const Text(
+                  //       'Forgot pin?',
+                  //       style: TextStyle(
+                  //         color: Colors.white,
+                  //         fontSize: 15,
+                  //         fontFamily: 'Inter',
+                  //         fontWeight: FontWeight.bold,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                   const SizedBox(height: 30), // Add space above the button
                   Center(
                     child: SizedBox(
