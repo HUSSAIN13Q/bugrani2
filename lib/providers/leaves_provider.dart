@@ -9,6 +9,22 @@ class LeavesProvider extends ChangeNotifier {
   List<String> recommendations = [];
   bool isLoading = false;
 
+  Future<void> getMyLeave() async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await LeavesService().getMyLeave();
+      leaves =
+          (response.data as List).map((leave) => Leave.fromMap(leave)).toList();
+    } catch (e) {
+      print("Error fetching leaves: $e");
+    }
+
+    isLoading = false;
+    notifyListeners();
+  }
+
   Future<void> getLeaves() async {
     isLoading = true;
     notifyListeners();

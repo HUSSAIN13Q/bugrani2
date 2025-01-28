@@ -1,4 +1,5 @@
 import 'package:bugrani2/pages/NotificationPage.dart';
+import 'package:bugrani2/pages/mangerPage.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'leaves_page.dart';
@@ -53,6 +54,13 @@ class _HomePageState extends State<HomePage> {
             child: MapSection(),
             isVisible: true,
             onRemoveWidget: () => _toggleWidgetVisibility('Head office Maps'),
+          ),
+          CustomWidgetContainer(
+            title: 'Manager',
+            icon: Icons.event_note,
+            child: ManagerPageButton(),
+            isVisible: true,
+            onRemoveWidget: () => _toggleWidgetVisibility('Manager'),
           ),
           CustomWidgetContainer(
             title: 'Leaves',
@@ -132,6 +140,8 @@ class _HomePageState extends State<HomePage> {
     switch (title) {
       case 'Head office Maps':
         return Icons.map;
+      case 'Manager':
+        return Icons.event_note;
       case 'Leaves':
         return Icons.event_note;
       case 'Special Offers':
@@ -149,6 +159,8 @@ class _HomePageState extends State<HomePage> {
     switch (title) {
       case 'Head office Maps':
         return MapSection();
+      case 'Manager':
+        return ManagerPageButton();
       case 'Leaves':
         return LeavesPageButton();
       case 'Special Offers':
@@ -378,6 +390,49 @@ class HomePageContent extends StatelessWidget {
             );
           }).toList(),
         ],
+      ),
+    );
+  }
+}
+
+class ManagerPageButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ManagerLeaveRequestScreen()),
+          );
+        },
+        child: Container(
+          width: double.infinity,
+          height: 80,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                blurRadius: 10,
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Center(
+            child: Text(
+              'Manager Page',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.blue,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

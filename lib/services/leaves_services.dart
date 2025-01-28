@@ -90,4 +90,25 @@ class LeavesService {
       return e.response!;
     }
   }
+
+  Future<Response> getMyLeave() async {
+    try {
+      // Get the token from AuthServices
+      String? token = await AuthServices().getToken();
+      if (token == null) {
+        throw Exception('Token not found');
+      }
+      Response response = await dio.get(
+        '/leaves',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+      return response;
+    } on DioError catch (e) {
+      return e.response!;
+    }
+  }
 }
