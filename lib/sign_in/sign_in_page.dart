@@ -37,19 +37,18 @@ class SignInPage extends StatelessWidget {
             ),
           ),
 
-          // Logo
-          // Positioned(
-          //   top: 80,
-          //   left: 0,
-          //   right: 0,
-          //   child: Center(
-          //     child: Image.asset(
-          //       ' assets/images/lastlogo.png',
-          //       width: 400,
-          //       height: 400,
-          //     ),
-          //   ),
-          // ),
+          Positioned(
+            top: 80,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Image.asset(
+                'images/lastlogo.png',
+                width: 400,
+                height: 400,
+              ),
+            ),
+          ),
 
           // Blue Container with Login Form
           Positioned(
@@ -142,41 +141,43 @@ class SignInPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 30), // Add space above the button
                   Center(
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        try {
-                          await context.read<AuthProvider>().signin(
-                                email: usernameController.text,
-                                password: passwordController.text,
-                              );
+                    child: SizedBox(
+                      width: double.infinity, // Make button span full width
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          try {
+                            await context.read<AuthProvider>().signin(
+                                  email: usernameController.text,
+                                  password: passwordController.text,
+                                );
 
-                          var user = context.read<AuthProvider>().user;
-                          print("You are logged in as ${user!.email}");
-                          context.push('/home');
-                        } on DioException catch (e) {
-                          if (e.response == null) return;
-                          if (e.response!.data == null) return;
+                            var user = context.read<AuthProvider>().user;
+                            print("You are logged in as ${user!.email}");
+                            context.push('/home');
+                          } on DioException catch (e) {
+                            if (e.response == null) return;
+                            if (e.response!.data == null) return;
 
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(e.response!.data['message'] ??
-                                  "Unexpected error"),
-                            ),
-                          );
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFFB8E36),
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 50,
-                            vertical: 20), // Increase button size
-                        textStyle: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight
-                                .bold), // Increase font size and make bold
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(e.response!.data['message'] ??
+                                    "Unexpected error"),
+                              ),
+                            );
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFFB8E36),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 20), // Increase button size
+                          textStyle: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight
+                                  .bold), // Increase font size and make bold
+                        ),
+                        child: const Text('Sign In'),
                       ),
-                      child: const Text('Sign In'),
                     ),
                   ),
                   const SizedBox(height: 20), // Add space below the button

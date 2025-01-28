@@ -130,24 +130,28 @@ class ForgetPassPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 40), // Add space above the button
                   Center(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        context.pop();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFFB8E36),
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 50, vertical: 20), // Increase button size
-                        textStyle: const TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold), // Increase font size and make bold
-                      ),
-                      child: const Text(
-                        'Submit',
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white, // Change font color to white
+                    child: SizedBox(
+                      width: double.infinity, // Make button span full width
+                      child: ElevatedButton(
+                        onPressed: () {
+                          context.pop();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFFB8E36),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 20), // Increase button size
+                          textStyle: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold), // Increase font size and make bold
+                        ),
+                        child: const Text(
+                          'Submit',
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white, // Change font color to white
+                          ),
                         ),
                       ),
                     ),
