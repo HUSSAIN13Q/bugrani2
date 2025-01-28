@@ -160,11 +160,10 @@ class FloorPage extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          // Blue AppBar with Logo and Title
           Stack(
             children: [
               Container(
-                height: 150, // Reduced the height of the blue container
+                height: 150,
                 decoration: BoxDecoration(
                   color: Color(0xFF2C80E6),
                   borderRadius: BorderRadius.only(
@@ -232,7 +231,7 @@ class FloorPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Image.asset(
-                    'assets/images/floor_map_placeholder.png', // Replace with actual map
+                    'assets/images/floor_map_placeholder.png',
                     fit: BoxFit.cover,
                   ),
                 ),

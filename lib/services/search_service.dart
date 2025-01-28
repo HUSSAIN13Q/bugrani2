@@ -2,10 +2,9 @@ import 'package:bugrani2/sign_in/auth_services.dart';
 import 'package:dio/dio.dart';
 
 import 'client.dart';
-// Import the Dio client
 
 class SearchService {
-  final Dio _dio = dio; // Use the global Dio client
+  final Dio _dio = dio;
 
   Future<List<dynamic>> searchEmployees(String query) async {
     try {

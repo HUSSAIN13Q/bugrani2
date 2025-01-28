@@ -60,7 +60,7 @@ class _BusinessCardDialogState extends State<BusinessCardDialog> {
             ),
             const SizedBox(height: 12),
             Text(
-              'Meshari Alhouli',
+              'Hussain Alqallaf',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
@@ -69,7 +69,7 @@ class _BusinessCardDialogState extends State<BusinessCardDialog> {
             ),
             const SizedBox(height: 6),
             Text(
-              'Burgan Bank Employee :\n UI Design in IT Department',
+              'Burgan Bank Employee :\n  IT Department',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 12,
@@ -85,17 +85,26 @@ class _BusinessCardDialogState extends State<BusinessCardDialog> {
                   children: [
                     Text(
                       'Office Number: 22255321',
-                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black),
+                      style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black),
                     ),
                     const SizedBox(height: 3),
                     Text(
                       'Phone Number: 98979686',
-                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black),
+                      style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black),
                     ),
                     const SizedBox(height: 3),
                     Text(
-                      'Email: Mesharialhouli@burgan.com',
-                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black),
+                      'Email: Hussain Alqallaf@burgan.com',
+                      style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black),
                     ),
                   ],
                 ),

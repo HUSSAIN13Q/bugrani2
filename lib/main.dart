@@ -47,13 +47,8 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/home',
-      builder: (context, state) => HomePage(), // Route to HomePage
+      builder: (context, state) => HomePage(),
     ),
-    // GoRoute(
-    //   path: '/leaves_page',
-    //   builder: (context, state) => LeavesPage(), // Route to LeavesPage
-    // ),
-    // Add other routes here as needed
   ],
 );
 

@@ -21,15 +21,16 @@ class CommunityItem extends StatelessWidget {
   final String subtitle;
   final String date;
 
-  const CommunityItem({required this.title, required this.subtitle, required this.date});
+  const CommunityItem(
+      {required this.title, required this.subtitle, required this.date});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(left: 16), // Add left margin
+      margin: EdgeInsets.only(left: 16),
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white, // Set background to white
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -42,9 +43,11 @@ class CommunityItem extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          Text(title,
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           Text(subtitle, style: TextStyle(fontWeight: FontWeight.bold)),
-          if (date.isNotEmpty) Text(date, style: TextStyle(fontWeight: FontWeight.bold)),
+          if (date.isNotEmpty)
+            Text(date, style: TextStyle(fontWeight: FontWeight.bold)),
         ],
       ),
     );

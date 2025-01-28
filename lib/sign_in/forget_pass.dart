@@ -10,7 +10,6 @@ class ForgetPassPage extends StatelessWidget {
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          // Status Bar
           Positioned(
             top: 0,
             left: 0,
@@ -52,7 +51,6 @@ class ForgetPassPage extends StatelessWidget {
             ),
           ),
 
-          // Blue Container with Form
           Positioned(
             bottom: -100,
             left: 0,
@@ -70,7 +68,7 @@ class ForgetPassPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 20), // Add space above the New Pin
+                  const SizedBox(height: 20),
                   const Text(
                     'New Pin',
                     style: TextStyle(
@@ -89,7 +87,7 @@ class ForgetPassPage extends StatelessWidget {
                         color: Color(0xFF9D9D9D),
                         fontSize: 20,
                       ),
-                      counterStyle: const TextStyle(color: Colors.white), // Make 0/4 white
+                      counterStyle: const TextStyle(color: Colors.white),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
                         borderSide: const BorderSide(color: Color(0xFFB8B8B8)),
@@ -118,7 +116,7 @@ class ForgetPassPage extends StatelessWidget {
                         color: Color(0xFF9D9D9D),
                         fontSize: 20,
                       ),
-                      counterStyle: const TextStyle(color: Colors.white), // Make 0/4 white
+                      counterStyle: const TextStyle(color: Colors.white),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
                         borderSide: const BorderSide(color: Color(0xFFB8B8B8)),
@@ -128,7 +126,7 @@ class ForgetPassPage extends StatelessWidget {
                     maxLength: 4,
                     obscureText: true,
                   ),
-                  const SizedBox(height: 40), // Add space above the button
+                  const SizedBox(height: 40),
                   Center(
                     child: ElevatedButton(
                       onPressed: () {
@@ -138,9 +136,12 @@ class ForgetPassPage extends StatelessWidget {
                         backgroundColor: const Color(0xFFFB8E36),
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 50, vertical: 20), // Increase button size
+                            horizontal: 50,
+                            vertical: 20), // Increase button size
                         textStyle: const TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold), // Increase font size and make bold
+                            fontSize: 18,
+                            fontWeight: FontWeight
+                                .bold), // Increase font size and make bold
                       ),
                       child: const Text(
                         'Submit',

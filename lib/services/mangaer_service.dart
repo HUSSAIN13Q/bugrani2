@@ -1,31 +1,3 @@
-// import 'package:dio/dio.dart';
-// import 'client.dart';
-
-// class ManagerService {
-//   final String baseUrl = "http://localhost:8000";
-
-//   Future<Map<String, dynamic>> getDepartmentEmployees() async {
-//     final dio = await DioClient.getDio();
-//     final response = await dio.get('$baseUrl/auth/department-employees');
-
-//     if (response.statusCode == 200) {
-//       return response.data;
-//     } else {
-//       throw Exception('Failed to fetch department employees');
-//     }
-//   }
-
-//   Future<Map<String, dynamic>> getEmployeeInsights(String employeeId) async {
-//     final dio = await DioClient.getDio();
-//     final response = await dio.get('$baseUrl/leaves/insights/$employeeId');
-
-//     if (response.statusCode == 200) {
-//       return response.data;
-//     } else {
-//       throw Exception('Failed to fetch employee insights');
-//     }
-//   }
-// }
 import 'package:dio/dio.dart';
 import 'client.dart';
 import 'package:bugrani2/sign_in/auth_services.dart';

@@ -32,7 +32,7 @@ class HeaderSection extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'Meshari alhouli',
+                'Hussain Alqallaf',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -41,7 +41,7 @@ class HeaderSection extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               const Text(
-                'UI Design / IT Department',
+                'IT Manager',
                 style: TextStyle(fontSize: 14, color: Colors.black54),
               ),
               const SizedBox(height: 16),
@@ -57,7 +57,7 @@ class HeaderSection extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   const WorkStats(
-                      title: 'Working day', value: '30', unit: 'Days'),
+                      title: 'Working day', value: '24', unit: 'Days'),
                   const VerticalDivider(color: Colors.grey),
                   const WorkStats(
                     title: 'Late',
@@ -191,12 +191,12 @@ class HeaderSection extends StatelessWidget {
                 const SizedBox(height: 16),
                 Image.asset(
                   'images/newsmap.png',
-                  width: double.infinity, // Extend to dialog border
+                  width: double.infinity,
                   fit: BoxFit.cover,
                 ),
                 const SizedBox(height: 16),
                 SizedBox(
-                  width: double.infinity, // Make button width like dialog width
+                  width: double.infinity,
                   child: ElevatedButton(
                     onPressed: attendanceProvider.isLoading
                         ? null
@@ -222,7 +222,8 @@ class HeaderSection extends StatelessWidget {
                           },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.orange,
-                      padding: EdgeInsets.symmetric(vertical: 20), // Increased padding
+                      padding: EdgeInsets.symmetric(
+                          vertical: 20), // Increased padding
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
@@ -321,18 +322,18 @@ class CheckButton extends StatelessWidget {
         children: [
           Icon(
             icon,
-            size: 50, // Increased icon size
+            size: 50,
             color: onPressed == null ? Colors.grey : Colors.orange,
           ),
           const SizedBox(height: 8),
           Text(
             title,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold), // Increased font size
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 4),
           Text(
             status,
-            style: const TextStyle(fontSize: 16, color: Colors.black54), // Increased font size
+            style: const TextStyle(fontSize: 16, color: Colors.black54),
           ),
         ],
       ),

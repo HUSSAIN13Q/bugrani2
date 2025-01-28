@@ -136,7 +136,7 @@ class OfferCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 12), // Adjusted space above the button
+                SizedBox(height: 12),
                 ElevatedButton(
                   onPressed: () => Navigator.pop(context),
                   style: ElevatedButton.styleFrom(

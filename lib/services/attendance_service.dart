@@ -44,12 +44,10 @@ class AttendanceService {
     }
   }
 
-  // Method to check out
   Future<Map<String, dynamic>> checkOut(
       double latitude, double longitude) async {
     try {
       final dio = await DioClient.getDio();
-      // Get the token from AuthServices
       String? token = await AuthServices().getToken();
       if (token == null) {
         throw Exception('Token not found');
@@ -80,7 +78,6 @@ class AttendanceService {
     }
   }
 
-  // Method to fetch today's attendance
   Future<Map<String, dynamic>?> getTodayAttendance() async {
     try {
       final dio = await DioClient.getDio();
@@ -92,7 +89,6 @@ class AttendanceService {
       if (response.statusCode == 200 && response.data != null) {
         return response.data;
       } else if (response.statusCode == 404) {
-        // No attendance data for today
         return null;
       } else {
         throw Exception(response.data['message']);

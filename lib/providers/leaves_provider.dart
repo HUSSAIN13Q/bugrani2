@@ -71,7 +71,6 @@ class LeavesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Submit a new leave request via the API
   Future<void> submitLeave({
     required String type,
     required String startDate,
