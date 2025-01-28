@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:visibility_detector/visibility_detector.dart';
-import 'package:intl/intl.dart';
 
 class NewsPage extends StatelessWidget {
   @override

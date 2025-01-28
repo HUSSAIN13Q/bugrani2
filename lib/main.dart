@@ -1,4 +1,3 @@
-import 'package:bugrani2/pages/CommunityPage.dart';
 import 'package:bugrani2/pages/HomePage.dart';
 import 'package:bugrani2/providers/clubs_provider.dart';
 import 'package:bugrani2/providers/inbox_provider.dart';
